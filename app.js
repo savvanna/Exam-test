@@ -18,10 +18,10 @@ app.use(cors());
 app.use(express.json()); // Parse JSON request bodies
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/exams', examRoutes);
-app.use('/api/questions', questionRoutes);
-app.use('/api/results', resultRoutes);
+app.use('/auth', authRoutes);
+app.use('/exams', examRoutes);
+app.use('/questions', questionRoutes);
+app.use('/results', resultRoutes);
 
 // Sync database and start server
 // ... (остальной код)

@@ -6,8 +6,9 @@ const db = require('../models'); // Импортируем db
 const Teacher = db.Teacher; // Получаем модель Teacher из db
 
 router.post('/register', async (req, res) => {
+  console.log(req.body);
   try {
-    const { username, password, email, teacherName } = req.body;
+    const { username, password, email, teacherName } = req.body; // Оставьте это пока так
 
     // Check if the username already exists
     const existingTeacher = await Teacher.findOne({ where: { username } });
@@ -20,10 +21,10 @@ router.post('/register', async (req, res) => {
 
     // Create a new teacher
     const newTeacher = await Teacher.create({
-      username,
-      password: hashedPassword,
-      email,
-      TeacherName: teacherName
+      username: username,
+      Password: hashedPassword, // Используем Password
+      Email: email, // Используем Email
+      TeacherName: teacherName // Используем TeacherName
     });
 
     res.status(201).json({ message: 'Teacher created successfully' });
@@ -35,9 +36,10 @@ router.post('/register', async (req, res) => {
 
 // Login (POST /api/auth/login)
 router.post('/login', async (req, res) => {
+  console.log(req.body)
   try {
-    const { Email, Password } = req.body;
-    const user = await Teacher.findOne({ where: { Email } }); // Используем Teacher здесь
+    const { Email, Password } = req.body; // Убедитесь, что поле называется Email
+    const user = await Teacher.findOne({ where: { Email } });
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
