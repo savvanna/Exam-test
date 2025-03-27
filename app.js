@@ -22,7 +22,8 @@ app.use('/auth', authRoutes);
 app.use('/exams', examRoutes);
 app.use('/questions', questionRoutes);
 app.use('/results', resultRoutes);
-
+app.use('/teachers', authRoutes);
+app.use('/students', authRoutes);
 // Sync database and start server
 // ... (остальной код)
 

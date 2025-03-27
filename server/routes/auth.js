@@ -8,12 +8,25 @@ const Teacher = db.Teacher; // Получаем модель Teacher из db
 router.post('/register', async (req, res) => {
   console.log(req.body);
   try {
-    const { username, password, email, teacherName } = req.body; // Оставьте это пока так
+    const { username, password, Email, TeacherName } = req.body; // Используем "Email" и "TeacherName" с большой буквы
 
     // Check if the username already exists
     const existingTeacher = await Teacher.findOne({ where: { username } });
     if (existingTeacher) {
       return res.status(400).json({ message: 'Username already exists' });
+    }
+
+    // Check if password is valid
+    if (!password) {
+      return res.status(400).json({ message: 'Password is required' });
+    }
+
+    // Check if Email and TeacherName are valid
+    if (!Email) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+    if (!TeacherName) {
+      return res.status(400).json({ message: 'TeacherName is required' });
     }
 
     // Hash the password
@@ -22,9 +35,9 @@ router.post('/register', async (req, res) => {
     // Create a new teacher
     const newTeacher = await Teacher.create({
       username: username,
-      Password: hashedPassword, // Используем Password
-      Email: email, // Используем Email
-      TeacherName: teacherName // Используем TeacherName
+      Password: hashedPassword,
+      Email: Email, // Используем "Email" с большой буквы
+      TeacherName: TeacherName // Используем "TeacherName" с большой буквы
     });
 
     res.status(201).json({ message: 'Teacher created successfully' });
