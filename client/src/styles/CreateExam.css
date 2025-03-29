@@ -1,65 +1,173 @@
 /* client/src/styles/CreateExam.css */
-.container {
-    max-width: 500px;
-    margin: 50px auto;
-    padding: 20px;
-    border: 1px solid #e2e2e2;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
+
+* {
+    box-sizing: border-box;
   }
   
-  .heading {
+  .exam-container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 20px 30px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .exam-container h2 {
     text-align: center;
     margin-bottom: 20px;
+    color: #333;
   }
   
   .error {
-    color: red;
+    color: #f44336;
+    background-color: #ffe6e6;
+    padding: 10px;
+    border-radius: 4px;
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
   }
   
   .success {
-    color: green;
+    color: #4caf50;
+    background-color: #e8f5e9;
+    padding: 10px;
+    border-radius: 4px;
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
   }
   
-  .form {
+  .exam-form {
     display: flex;
     flex-direction: column;
   }
   
-  .formGroup {
-    margin-bottom: 15px;
+  .form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
   }
   
-  .label {
-    display: block;
+  .form-group label {
     margin-bottom: 5px;
+    font-weight: 600;
+    color: #555;
   }
   
-  .input {
+  .exam-form input,
+  .exam-form select {
     width: 100%;
-    padding: 10px;
+    padding: 8px 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
+    transition: border-color 0.3s ease;
   }
   
-  .button {
-    padding: 10px;
+  .exam-form input:focus,
+  .exam-form select:focus {
+    border-color: #4caf50;
+    outline: none;
+  }
+  
+  .question-block {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+  }
+  
+  .question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .question-header h4 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .remove-btn {
+    background-color: #f44336;
+    color: #fff;
+    padding: 5px 10px;
     border: none;
     border-radius: 4px;
-    background-color: #4CAF50;
-    color: #fff;
-    font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
   
-  .button:hover {
-    background-color: #45A049;
+  .remove-btn:hover {
+    background-color: #d32f2f;
   }
   
+  .answers-section {
+    margin-top: 10px;
+  }
+  
+  /* Обновлённое оформление блоков вариантов ответа */
+  .answer-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Распределяем элементы по краям */
+    margin-bottom: 8px;
+  }
+  
+  .answer-radio-container {
+    flex: 0 0 auto; /* Не сжимается и не расширяется */
+    margin-right: 10px; /* Отступ между radio button и textbox */
+  }
+  
+  .answer-radio-container input[type="radio"] {
+    cursor: pointer;
+  }
+  
+  .answer-text {
+    flex: 1 1 auto; /* Занимает доступное пространство */
+    position: relative; /* Для позиционирования "заглушки" */
+  }
+  
+  .answer-text input[type="text"] {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+    pointer-events: none; /* Делаем textbox некликабельным */
+    background-color: #eee; /* Визуально показываем, что он неактивен */
+    color: #777;
+  }
+  
+  .add-answer-btn,
+  .add-question-btn,
+  .submit-btn {
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+    align-self: flex-start;
+  }
+  
+  .add-answer-btn:hover,
+  .add-question-btn:hover,
+  .submit-btn:hover {
+    background-color: #43a047;
+  }
+  
+  /* Дополнительная адаптивность */
+  @media (max-width: 768px) {
+    .exam-container {
+      padding: 15px;
+      margin: 20px;
+    }
+  }
