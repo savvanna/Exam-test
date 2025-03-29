@@ -17,8 +17,11 @@ const CreateExam = () => {
     const token = localStorage.getItem('token');
 
     try {
+      // Получаем базовый URL из переменной окружения
+      const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+
       const response = await axios.post(
-        '/exams', // Замените на ваш URL для создания экзамена
+        `${baseURL}/exams`, // Используем абсолютный URL
         { Title: title, Date: date },
         {
           headers: {
@@ -61,7 +64,7 @@ const CreateExam = () => {
         </div>
         <button type="submit">Create Exam</button>
       </form>
-    </div>
+    </div>      
   );
 };
 

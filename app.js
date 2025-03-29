@@ -14,18 +14,17 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+app.use(cors()); // <--- Убедитесь, что cors() здесь
 app.use(express.json()); // Parse JSON request bodies
 
 // Routes
 app.use('/auth', authRoutes);
-// app.use('/exams', examRoutes);
-// app.use('/questions', questionRoutes);
-// app.use('/results', resultRoutes);
-// app.use('/teachers', authRoutes);
-// app.use('/students', authRoutes);
-// Sync database and start server
-// ... (остальной код)
+app.use('/exams', examRoutes);
+app.use('/questions', questionRoutes);
+app.use('/results', resultRoutes);
+app.use('/teachers', authRoutes);
+app.use('/students', authRoutes);
+
 
 // Sync database and start server
 console.log('Attempting to connect to the database...');
