@@ -17,14 +17,14 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/auth/login" element={<Login />} />
         <Route
           path="/create-exam"
           element={
             isLoggedIn() && isTeacher() ? ( // Проверяем и роль
               <CreateExam />
             ) : (
-              <Navigate to="/login" />
+              <Navigate to="/auth/login" />
             )
           }
         />
@@ -34,7 +34,7 @@ const App = () => {
             isLoggedIn() ? (
               <Results />
             ) : (
-              <Navigate to="/login" />
+              <Navigate to="/auth/login" />
             )
           }
         />
@@ -44,11 +44,11 @@ const App = () => {
             isLoggedIn() ? (
               <TakeExam />
             ) : (
-              <Navigate to="/login" />
+              <Navigate to="/auth/login" />
             )
           }
         />
-        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/" element={<Navigate to="/auth/login" />} />
       </Routes>
     </Router>
   );

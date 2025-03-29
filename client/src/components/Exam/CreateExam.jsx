@@ -18,7 +18,7 @@ const CreateExam = () => {
 
     try {
       const response = await axios.post(
-        '/api/exams', // Замените на ваш URL для создания экзамена
+        '/exams', // Замените на ваш URL для создания экзамена
         { Title: title, Date: date },
         {
           headers: {

@@ -19,15 +19,16 @@ app.use(express.json()); // Parse JSON request bodies
 
 // Routes
 app.use('/auth', authRoutes);
-app.use('/exams', examRoutes);
-app.use('/questions', questionRoutes);
-app.use('/results', resultRoutes);
-app.use('/teachers', authRoutes);
-app.use('/students', authRoutes);
+// app.use('/exams', examRoutes);
+// app.use('/questions', questionRoutes);
+// app.use('/results', resultRoutes);
+// app.use('/teachers', authRoutes);
+// app.use('/students', authRoutes);
 // Sync database and start server
 // ... (остальной код)
 
 // Sync database and start server
+console.log('Attempting to connect to the database...');
 sequelize.authenticate() // Проверяем подключение к БД
   .then(() => {
     console.log('Connection has been established successfully.');

@@ -47,8 +47,9 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Login (POST /api/auth/login)
+
 router.post('/login', async (req, res) => {
+  console.log('Defining /auth/login route');
   console.log(req.body)
   try {
     const { Email, Password } = req.body; // Убедитесь, что поле называется Email

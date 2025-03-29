@@ -11,9 +11,11 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log('Sending request to:', '/auth/login'); // Проверяем URL
+    // Используем переменную окружения для базового URL API
+    const baseURL = process.env.REACT_APP_API_BASE_URL || ''; // Добавляем пустую строку как значение по умолчанию
+    console.log('Sending request to:', `${baseURL}/auth/login`); // Проверяем URL
     try {
-      const response = await axios.post('/auth/login', { Email: email, Password: password });
+      const response = await axios.post(`${baseURL}/auth/login`, { Email: email, Password: password });
       const { token, role } = response.data;
 
       if (token) {
@@ -26,7 +28,7 @@ const Login = () => {
       }
     } catch (error) {
       console.error('Login error:', error);
-      setError('Login error: ' + error.message);
+      setError('Login error: ' + JSON.stringify(error));
     }
   };
 
