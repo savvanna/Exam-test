@@ -10,24 +10,29 @@ const Exam = db.Exam;
 const Question = db.Question;  // Модель вопросов
 
 // Простое создание экзамена без вопросов (если нужно)
+// exams.js
 router.post('/', authMiddleware, async (req, res) => {
+  console.log('Received exam data:', req.body);
   try {
     const { Title, Date } = req.body;
     const TeacherID = req.userId;
 
-    // Проверка наличия преподавателя
+    // Проверка существования преподавателя
     const teacher = await Teacher.findByPk(TeacherID);
     if (!teacher) {
+      console.error(`Teacher with id ${TeacherID} not found.`);
       return res.status(400).json({ message: 'Teacher not found.' });
     }
 
     const exam = await Exam.create({ Title, Date, TeacherID });
+    console.log('Exam created:', exam);
     res.status(201).json({ message: 'Exam created successfully', exam });
   } catch (error) {
     console.error('Error creating exam:', error);
     res.status(500).json({ message: 'Error creating exam', error: error.message });
   }
 });
+
 
 // Создание экзамена с добавлением вопросов (детальный режим)
 router.post('/detailed', authMiddleware, async (req, res) => {
