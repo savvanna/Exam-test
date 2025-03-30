@@ -1,4 +1,4 @@
-/* client/src/styles/Login.css */
+/* client/src/styles/Register.css */
 
 body {
     background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
@@ -7,8 +7,8 @@ body {
     padding: 0;
   }
   
-  /* Контейнер для страницы логина */
-  .login-container {
+  /* Контейнер для страницы регистрации */
+  .register-container {
     max-width: 400px;
     margin: 100px auto;
     padding: 40px 30px;
@@ -18,14 +18,14 @@ body {
   }
   
   /* Заголовок */
-  .login-container h2 {
+  .register-container h2 {
     text-align: center;
     margin-bottom: 24px;
     color: #333;
   }
   
   /* Сообщение об ошибке */
-  .login-container .error-message {
+  .register-container .error-message {
     background-color: #ffe6e6;
     color: #f44336;
     padding: 10px;
@@ -34,25 +34,26 @@ body {
     margin-bottom: 16px;
   }
   
-  /* Форма логина */
-  .login-container form {
+  /* Форма регистрации */
+  .register-container form {
     display: flex;
     flex-direction: column;
   }
   
-  .login-container form > div {
+  .register-container form > div {
     margin-bottom: 16px;
   }
   
-  .login-container form label {
+  .register-container form label {
     display: block;
     font-weight: bold;
     margin-bottom: 8px;
     color: #555;
   }
   
-  .login-container form input[type="email"],
-  .login-container form input[type="password"] {
+  .register-container form input[type="text"],
+  .register-container form input[type="email"],
+  .register-container form input[type="password"] {
     width: 100%;
     padding: 12px;
     font-size: 16px;
@@ -61,13 +62,14 @@ body {
     transition: border-color 0.3s ease;
   }
   
-  .login-container form input[type="email"]:focus,
-  .login-container form input[type="password"]:focus {
+  .register-container form input[type="text"]:focus,
+  .register-container form input[type="email"]:focus,
+  .register-container form input[type="password"]:focus {
     border-color: #4caf50;
     outline: none;
   }
   
-  .login-container form button[type="submit"] {
+  .register-container form button[type="submit"] {
     width: 100%;
     padding: 12px;
     font-size: 18px;
@@ -79,23 +81,23 @@ body {
     transition: background-color 0.3s ease;
   }
   
-  .login-container form button[type="submit"]:hover {
+  .register-container form button[type="submit"]:hover {
     background-color: #43a047;
   }
   
-  /* Новый блок для ссылки/кнопки регистрации */
-  .register-link {
+  /* Блок для перехода на страницу логина */
+  .login-link {
     text-align: center;
     margin-top: 20px;
   }
   
-  .register-link p {
+  .login-link p {
     margin: 0 0 10px;
     font-size: 16px;
     color: #333;
   }
   
-  .register-btn {
+  .login-btn {
     padding: 10px 20px;
     font-size: 16px;
     background-color: #2196f3;
@@ -106,7 +108,7 @@ body {
     transition: background-color 0.3s ease;
   }
   
-  .register-btn:hover {
+  .login-btn:hover {
     background-color: #1976d2;
   }
   
