@@ -1,0 +1,21 @@
+/* client/src/styles/Dashboard.css */
+.dashboard-container {
+    max-width: 600px;
+    margin: 80px auto;
+    padding: 40px;
+    background-color: #fff;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dashboard-container h2 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .dashboard-container p {
+    font-size: 18px;
+    color: #555;
+  }
+  

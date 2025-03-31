@@ -2,7 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const sequelize = require('./server/config/database'); // Import Sequelize instance
-const authRoutes = require('./server/routes/auth');
+const authTeacherRoutes = require('./server/routes/authTeacher');
+const authStudentRoutes = require('./server/routes/authStudent');
 const examRoutes = require('./server/routes/exams');
 const questionRoutes = require('./server/routes/questions');
 const resultRoutes = require('./server/routes/results');
@@ -18,12 +19,12 @@ app.use(cors()); // <--- Убедитесь, что cors() здесь
 app.use(express.json()); // Parse JSON request bodies
 
 // Routes
-app.use('/auth', authRoutes);
+app.use('/auth/teacher', authTeacherRoutes);
+app.use('/auth/student', authStudentRoutes);
 app.use('/exams', examRoutes);
 app.use('/questions', questionRoutes);
 app.use('/results', resultRoutes);
-app.use('/teachers', authRoutes);
-app.use('/students', authRoutes);
+
 
 
 // Sync database and start server

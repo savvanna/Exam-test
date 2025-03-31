@@ -1,35 +1,42 @@
-// client/src/App.jsx
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Login from './components/Auth/Login';
-import Register from './components/Auth/Register'; // Импорт регистрационного компонента
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import MainPage from './components/MainPage';
+import TeacherDashboard from './components/Dashboard/TeacherDashboard';
+import StudentDashboard from './components/Dashboard/StudentDashboard';
 import CreateExam from './components/Exam/CreateExam';
-import Results from './components/Exam/Results';
 import TakeExam from './components/Exam/TakeExam';
-import './styles/App.css'; // Стили находятся в src/styles
+import Results from './components/Exam/Results';
+import './styles/App.css';
 
 const App = () => {
   const isLoggedIn = () => localStorage.getItem('token') !== null;
-  const isTeacher = () => localStorage.getItem('role') === 'teacher';
+  const getRole = () => localStorage.getItem('role');
 
   return (
     <Router>
       <Routes>
-        <Route path="/auth/login" element={<Login />} />
-        <Route path="/auth/register" element={<Register />} /> {/* Добавлен маршрут для регистрации */}
-        <Route 
+        <Route path="/" element={<MainPage />} />
+        <Route
+          path="/teacher-dashboard"
+          element={isLoggedIn() && getRole() === 'teacher' ? <TeacherDashboard /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/student-dashboard"
+          element={isLoggedIn() && getRole() === 'student' ? <StudentDashboard /> : <Navigate to="/" />}
+        />
+        <Route
           path="/create-exam"
-          element={isLoggedIn() && isTeacher() ? <CreateExam /> : <Navigate to="/auth/login" />}
+          element={isLoggedIn() && getRole() === 'teacher' ? <CreateExam /> : <Navigate to="/" />}
         />
-        <Route 
-          path="/results" 
-          element={isLoggedIn() ? <Results /> : <Navigate to="/auth/login" />}
+        <Route
+          path="/take-exam"
+          element={isLoggedIn() && getRole() === 'student' ? <TakeExam /> : <Navigate to="/" />}
         />
-        <Route 
-          path="/take-exam" 
-          element={isLoggedIn() ? <TakeExam /> : <Navigate to="/auth/login" />}
+        <Route
+          path="/results"
+          element={isLoggedIn() ? <Results /> : <Navigate to="/" />}
         />
-        <Route path="/" element={<Navigate to="/auth/login" />} />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
   );
