@@ -8,12 +8,14 @@ module.exports = (sequelize, DataTypes) => {
     Email: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true, // Email должен быть уникальным
       validate: {
         isEmail: true,
       },
     },
     Subject: {
       type: DataTypes.STRING,
+      allowNull: true,
     },
     Password: {
       type: DataTypes.STRING,
@@ -22,11 +24,6 @@ module.exports = (sequelize, DataTypes) => {
     TeacherName: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    username: { // Добавляем поле username
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true, // Убедитесь, что имена пользователей уникальны
     },
   });
 

@@ -1,4 +1,3 @@
-// server/routes/authStudent.js
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -9,31 +8,33 @@ const Student = db.Student;
 router.post('/register', async (req, res) => {
   console.log('[Student Register]', req.body);
   try {
-    const { username, password, Email, StudentName } = req.body;
-    const existingStudent = await Student.findOne({ where: { username } });
+    // Из запроса берем поля (без username, так как его больше нет)
+    const { password, Email, StudentName, groupName } = req.body;
+    const existingStudent = await Student.findOne({ where: { Email } });
     if (existingStudent) {
-      return res.status(400).json({ message: 'Username already exists' });
+      return res.status(400).json({ message: 'A student with this email already exists' });
     }
     if (!password || !Email || !StudentName) {
       return res.status(400).json({ message: 'Required fields are missing' });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const newStudent = await Student.create({
-      username,
       Password: hashedPassword,
       Email,
       StudentName,
+      groupName,
     });
     res.status(201).json({ message: 'Student created successfully' });
   } catch (error) {
     console.error('Error creating student:', error);
-    res.status(500).json({ message: 'Error creating student' });
+    res.status(500).json({ message: 'Error creating student', error: error.message });
   }
 });
 
 router.post('/login', async (req, res) => {
   console.log('[Student Login]', req.body);
   try {
+    // Обратите внимание: теперь деструктурируем Password с заглавной буквы
     const { Email, Password } = req.body;
     const student = await Student.findOne({ where: { Email } });
     if (!student) {

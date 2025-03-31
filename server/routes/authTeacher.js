@@ -1,4 +1,3 @@
-// server/routes/authTeacher.js
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -9,31 +8,32 @@ const Teacher = db.Teacher;
 router.post('/register', async (req, res) => {
   console.log('[Teacher Register]', req.body);
   try {
-    const { username, password, Email, TeacherName } = req.body;
-    const existingTeacher = await Teacher.findOne({ where: { username } });
+    const { password, Email, TeacherName, Subject } = req.body;
+    const existingTeacher = await Teacher.findOne({ where: { Email } });
     if (existingTeacher) {
-      return res.status(400).json({ message: 'Username already exists' });
+      return res.status(400).json({ message: 'A teacher with this email already exists' });
     }
     if (!password || !Email || !TeacherName) {
       return res.status(400).json({ message: 'Required fields are missing' });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const newTeacher = await Teacher.create({
-      username,
       Password: hashedPassword,
       Email,
       TeacherName,
+      Subject: Subject || null,
     });
     res.status(201).json({ message: 'Teacher created successfully' });
   } catch (error) {
     console.error('Error creating teacher:', error);
-    res.status(500).json({ message: 'Error creating teacher' });
+    res.status(500).json({ message: 'Error creating teacher', error: error.message });
   }
 });
 
 router.post('/login', async (req, res) => {
   console.log('[Teacher Login]', req.body);
   try {
+    // Деструктурируем Password с заглавной буквы, как приходит от клиента
     const { Email, Password } = req.body;
     const user = await Teacher.findOne({ where: { Email } });
     if (!user) {
