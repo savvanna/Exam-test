@@ -26,35 +26,37 @@ const AuthModal = ({ onClose }) => {
     setActiveTab(tab);
   };
 
+  // Пример обработчика логина для студента в AuthModal.jsx
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setError('');
     const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
     try {
-      const loginRoute = role === 'teacher' ? '/auth/teacher/login' : '/auth/student/login';
-      const response = await axios.post(`${baseURL}${loginRoute}`, { Email: loginEmail, Password: loginPassword });
-      const { token, role: resRole } = response.data;
-      console.log("Response on login:", response.data);
-      if (token) {
-        localStorage.setItem('token', token);
-        localStorage.setItem('role', resRole);
-        console.log("Token saved, role:", resRole);
-        // Сначала перенаправляем, затем закрываем окно
-        if (resRole === 'teacher') {
-          navigate('/teacher-dashboard');
-        } else {
-          navigate('/student-dashboard');
-        }
-        onClose();
-      }
-       else {
+      const response = await axios.post(`${baseURL}/auth/student/login`, {
+        Email: loginEmail,
+        Password: loginPassword
+      });
+      const { token, role: resRole, StudentName, Email, RegistrationDate, GroupName } = response.data;
+if (token) {
+  localStorage.setItem('token', token);
+  localStorage.setItem('role', resRole);
+  localStorage.setItem('studentName', StudentName);
+  localStorage.setItem('studentEmail', Email);
+  localStorage.setItem('registrationDate', RegistrationDate);
+  localStorage.setItem('groupName', GroupName); // сохраняем значение группы с ключом "groupName"
+  console.log("Token saved, studentName:", StudentName, "GroupName:", GroupName);
+  navigate('/student-dashboard');
+  onClose();
+} else {
         setError('Login failed: Invalid credentials');
       }
     } catch (err) {
-      console.error('Login error:', err);
       setError('Login error: ' + JSON.stringify(err));
     }
   };
+  
+  
+
 
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();

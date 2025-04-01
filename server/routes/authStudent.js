@@ -34,7 +34,6 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   console.log('[Student Login]', req.body);
   try {
-    // Обратите внимание: теперь деструктурируем Password с заглавной буквы
     const { Email, Password } = req.body;
     const student = await Student.findOne({ where: { Email } });
     if (!student) {
@@ -49,11 +48,22 @@ router.post('/login', async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
-    res.json({ token, role: 'student' });
+    // Возвращаем все необходимые данные, включая groupName (обратите внимание на регистр!)
+    res.json({
+      token,
+      role: 'student',
+      StudentName: student.StudentName,
+      Email: student.Email,
+      RegistrationDate: student.RegistrationDate,
+      GroupName: student.groupName  // используем именно student.groupName, как в модели
+    });
   } catch (error) {
     console.error('Student login error:', error);
     res.status(500).json({ message: 'Error logging in' });
   }
 });
+
+
+
 
 module.exports = router;

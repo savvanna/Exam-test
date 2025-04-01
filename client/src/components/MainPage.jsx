@@ -5,9 +5,13 @@ import '../styles/MainPage.css';
 import AuthModal from './Auth/AuthModal';
 
 const MainPage = () => {
-  // Берем данные из localStorage, если пользователь авторизован
+  // Если пользователь авторизован, обязательно сохраняйте ключи в localStorage:
+  // Например, для учителя: teacherName, teacherEmail, subject, role, token;
+  // для студента: studentName, studentEmail, registrationDate, groupName, role, token.
   const token = localStorage.getItem('token');
-  const userName = localStorage.getItem('userName');
+  const userName = localStorage.getItem('teacherName') ||
+                   localStorage.getItem('studentName') ||
+                   localStorage.getItem('userName');
   const role = localStorage.getItem('role');
 
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -21,27 +25,31 @@ const MainPage = () => {
         <div className="logo">
           <Link to="/">ExamApp</Link>
         </div>
-        <nav className="menu">
-          <ul>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/exams">Exams</Link></li>
-            <li><Link to="/about">About</Link></li>
-            <li><Link to="/contact">Contact</Link></li>
-          </ul>
-        </nav>
-        <div className="user-info">
-          {token ? (
-            // Если авторизован, имя кликабельно и ведёт на профиль (по роли)
-            <Link
-              to={role === 'teacher' ? '/teacher-profile' : '/student-profile'}
-              className="user-link"
-            >
-              {userName} ({role && role.charAt(0).toUpperCase() + role.slice(1)})
-            </Link>
-          ) : (
+        {token ? (
+          <nav className="menu">
+            <ul>
+              <li>
+                <Link to={role === 'teacher' ? '/teacher-dashboard' : '/student-dashboard'}>
+                  {userName} ({role && role.charAt(0).toUpperCase() + role.slice(1)})
+                </Link>
+              </li>
+            </ul>
+          </nav>
+        ) : (
+          <nav className="menu">
+            <ul>
+              <li><Link to="/">Home</Link></li>
+              <li><Link to="/exams">Exams</Link></li>
+              <li><Link to="/about">About</Link></li>
+              <li><Link to="/contact">Contact</Link></li>
+            </ul>
+          </nav>
+        )}
+        {!token && (
+          <div className="user-info">
             <button onClick={openModal}>Login / Register</button>
-          )}
-        </div>
+          </div>
+        )}
       </header>
       <main className="content">
         <h1>Welcome to ExamApp!</h1>

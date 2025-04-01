@@ -6,13 +6,20 @@ import '../../styles/Dashboard.css';
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
-  const userName = localStorage.getItem('userName') || 'Student Name';
+  // Используем правильный ключ: studentName (а не userName)
+  const studentName = localStorage.getItem('studentName') || 'Student Name';
+  const studentEmail = localStorage.getItem('studentEmail') || 'student@example.com';
+  const registrationDate = localStorage.getItem('registrationDate') || 'N/A';
+  const groupName = localStorage.getItem('groupName') || 'Group';
   const role = localStorage.getItem('role') || 'student';
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
-    localStorage.removeItem('userName');
+    localStorage.removeItem('studentName');
+    localStorage.removeItem('studentEmail');
+    localStorage.removeItem('registrationDate');
+    localStorage.removeItem('groupName');
     navigate('/');
   };
 
@@ -20,15 +27,16 @@ const StudentDashboard = () => {
     <div className="dashboard-container">
       <aside className="sidebar">
         <div className="profile-info">
-          {/* Имя и иконка кликабельны – переход к профилю */}
-          <Link to="/student-profile">
+          <Link to="/student-dashboard">
             <FaUser size={40} />
           </Link>
           <div className="profile-text">
-            <Link to="/student-profile" className="user-link">
-              <span className="user-name">{userName}</span>
+            <Link to="/student-dashboard" className="user-link">
+              <span className="user-name">{studentName}</span>
             </Link>
-            <span className="user-role">({role.charAt(0).toUpperCase() + role.slice(1)})</span>
+            <span className="user-role">
+              ({role.charAt(0).toUpperCase() + role.slice(1)})
+            </span>
           </div>
         </div>
         <nav className="sidebar-menu">
@@ -40,7 +48,7 @@ const StudentDashboard = () => {
               </Link>
             </li>
             <li>
-              <Link to="/student-profile">
+              <Link to="/student-dashboard">
                 <FaUser className="menu-icon" />
                 <span>Profile</span>
               </Link>
@@ -67,9 +75,13 @@ const StudentDashboard = () => {
       <main className="dashboard-content">
         <h2>Student Profile</h2>
         <p>
-          Welcome, {userName}! This is your profile page where you can view your exam history, progress, and personal details.
+          Welcome, {studentName}! This is your profile page where you can view your exam history, progress, and personal details.
         </p>
-        {/* Здесь можно разместить дополнительную информацию профиля */}
+        <ul>
+          <li><strong>Email:</strong> {studentEmail}</li>
+          <li><strong>Registration Date:</strong> {registrationDate}</li>
+          <li><strong>Group:</strong> {groupName}</li>
+        </ul>
       </main>
     </div>
   );

@@ -6,13 +6,19 @@ import '../../styles/Dashboard.css';
 
 const TeacherDashboard = () => {
   const navigate = useNavigate();
-  const userName = localStorage.getItem('userName') || 'Teacher Name';
+  
+  // Читаем данные учителя из localStorage (они должны быть заранее установлены)
+  const teacherName = localStorage.getItem('teacherName') || localStorage.getItem('userName') || 'Teacher Name';
+  const teacherEmail = localStorage.getItem('teacherEmail') || 'teacher@example.com';
+  const subject = localStorage.getItem('subject') || 'Subject';
   const role = localStorage.getItem('role') || 'teacher';
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
-    localStorage.removeItem('userName');
+    localStorage.removeItem('teacherName');
+    localStorage.removeItem('teacherEmail');
+    localStorage.removeItem('subject');
     navigate('/');
   };
 
@@ -20,14 +26,16 @@ const TeacherDashboard = () => {
     <div className="dashboard-container">
       <aside className="sidebar">
         <div className="profile-info">
-          <Link to="/teacher-profile">
+          <Link to="/teacher-dashboard">
             <FaUser size={40} />
           </Link>
           <div className="profile-text">
-            <Link to="/teacher-profile" className="user-link">
-              <span className="user-name">{userName}</span>
+            <Link to="/teacher-dashboard" className="user-link">
+              <span className="user-name">{teacherName}</span>
             </Link>
-            <span className="user-role">({role.charAt(0).toUpperCase() + role.slice(1)})</span>
+            <span className="user-role">
+              ({role.charAt(0).toUpperCase() + role.slice(1)})
+            </span>
           </div>
         </div>
         <nav className="sidebar-menu">
@@ -39,7 +47,7 @@ const TeacherDashboard = () => {
               </Link>
             </li>
             <li>
-              <Link to="/teacher-profile">
+              <Link to="/teacher-dashboard">
                 <FaUser className="menu-icon" />
                 <span>Profile</span>
               </Link>
@@ -66,9 +74,13 @@ const TeacherDashboard = () => {
       <main className="dashboard-content">
         <h2>Teacher Profile</h2>
         <p>
-          Welcome, {userName}! This is your profile page where you can view your personal information and the list of exams you have created.
+          Welcome, {teacherName}! This is your profile page where you can view your personal information and the list of exams you have created.
         </p>
-        {/* Дополнительная информация профиля */}
+        <ul>
+          <li><strong>Email:</strong> {teacherEmail}</li>
+          <li><strong>Subject:</strong> {subject}</li>
+        </ul>
+        {/* Здесь можно добавить дополнительные секции, например, статистику, историю экзаменов и т.д. */}
       </main>
     </div>
   );
