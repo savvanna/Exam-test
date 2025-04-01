@@ -31,29 +31,53 @@ const AuthModal = ({ onClose }) => {
     e.preventDefault();
     setError('');
     const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+  
     try {
-      const response = await axios.post(`${baseURL}/auth/student/login`, {
+      // Определяем нужный endpoint в зависимости от роли
+      const loginRoute = role === 'teacher' 
+        ? '/auth/teacher/login' 
+        : '/auth/student/login';
+  
+      // Отправляем POST-запрос с теми же ключами, что и в Postman
+      const response = await axios.post(`${baseURL}${loginRoute}`, {
         Email: loginEmail,
-        Password: loginPassword
+        Password: loginPassword,
       });
-      const { token, role: resRole, StudentName, Email, RegistrationDate, GroupName } = response.data;
-if (token) {
-  localStorage.setItem('token', token);
-  localStorage.setItem('role', resRole);
-  localStorage.setItem('studentName', StudentName);
-  localStorage.setItem('studentEmail', Email);
-  localStorage.setItem('registrationDate', RegistrationDate);
-  localStorage.setItem('groupName', GroupName); // сохраняем значение группы с ключом "groupName"
-  console.log("Token saved, studentName:", StudentName, "GroupName:", GroupName);
-  navigate('/student-dashboard');
-  onClose();
-} else {
+  
+      // Если сервер возвращает токен, продолжаем авторизацию
+      const { token } = response.data;
+  
+      if (token) {
+        localStorage.setItem('token', token);
+        localStorage.setItem('role', response.data.role); // либо resRole
+  
+        if (role === 'teacher') {
+          // Для учителя ожидаем TeacherName, Subject, Email и т.п.
+          const { TeacherName, Email, Subject } = response.data;
+          localStorage.setItem('teacherName', TeacherName);
+          localStorage.setItem('teacherEmail', Email);
+          localStorage.setItem('subject', Subject);
+          console.log("Teacher token saved, teacherName:", TeacherName, "Subject:", Subject);
+          navigate('/teacher-dashboard');
+        } else {
+          // Для студента ожидаем StudentName, RegistrationDate, GroupName, Email и т.п.
+          const { StudentName, Email, RegistrationDate, GroupName } = response.data;
+          localStorage.setItem('studentName', StudentName);
+          localStorage.setItem('studentEmail', Email);
+          localStorage.setItem('registrationDate', RegistrationDate);
+          localStorage.setItem('groupName', GroupName);
+          console.log("Student token saved, studentName:", StudentName, "GroupName:", GroupName);
+          navigate('/student-dashboard');
+        }
+        onClose();
+      } else {
         setError('Login failed: Invalid credentials');
       }
     } catch (err) {
       setError('Login error: ' + JSON.stringify(err));
     }
   };
+  
   
   
 
