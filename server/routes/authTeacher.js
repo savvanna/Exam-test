@@ -33,7 +33,6 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   console.log('[Teacher Login]', req.body);
   try {
-    // Деструктурируем Password с заглавной буквы, как приходит от клиента
     const { Email, Password } = req.body;
     const user = await Teacher.findOne({ where: { Email } });
     if (!user) {
@@ -43,12 +42,20 @@ router.post('/login', async (req, res) => {
     if (!passwordMatch) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
+    // Изменяем здесь: вместо { userId: user.TeacherID, ... } используем { id: user.TeacherID, ... }
     const token = jwt.sign(
-      { userId: user.TeacherID, role: 'teacher' },
+      { id: user.TeacherID, role: 'teacher' },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
-    res.json({ token, role: 'teacher' });
+    res.json({
+      token,
+      role: 'teacher',
+      TeacherName: user.TeacherName,
+      Email: user.Email,
+      Subject: user.Subject,
+      TeacherID: user.TeacherID
+    });
   } catch (error) {
     console.error('Teacher login error:', error);
     res.status(500).json({ message: 'Error logging in' });

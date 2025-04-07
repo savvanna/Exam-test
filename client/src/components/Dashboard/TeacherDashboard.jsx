@@ -1,4 +1,3 @@
-// client/src/components/Dashboard/TeacherDashboard.jsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaHome, FaUser, FaBook, FaCog, FaSignOutAlt } from 'react-icons/fa';
@@ -105,7 +104,7 @@ const CreateExamForm = ({ onCancel, onExamCreated }) => {
       }
     }
 
-    // Преобразование ответов: ключи от A до J
+    // Преобразование вариантов ответов с ключами от A до J
     const answerLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
     const preparedQuestions = questions.map((q) => {
       const answersObject = {};
@@ -134,7 +133,6 @@ const CreateExamForm = ({ onCancel, onExamCreated }) => {
       });
       console.log('Exam created:', response.data);
       setSuccessMessage('Экзамен успешно создан!');
-      // Сброс формы
       setTitle('');
       setDate('');
       setQuestions([]);
@@ -158,6 +156,7 @@ const CreateExamForm = ({ onCancel, onExamCreated }) => {
             value={title}
             placeholder="Введите название экзамена"
             onChange={(e) => setTitle(e.target.value)}
+            required
           />
         </div>
         <div className="form-group">
@@ -166,6 +165,7 @@ const CreateExamForm = ({ onCancel, onExamCreated }) => {
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
+            required
           />
         </div>
         <h3>Вопросы</h3>
@@ -250,11 +250,7 @@ const CreateExamForm = ({ onCancel, onExamCreated }) => {
           <button type="submit" className="submit-btn">
             Сохранить экзамен
           </button>
-          <button
-            type="button"
-            onClick={onCancel}
-            className="cancel-btn"
-          >
+          <button type="button" onClick={onCancel} className="cancel-btn">
             Отмена
           </button>
         </div>
@@ -266,13 +262,13 @@ const CreateExamForm = ({ onCancel, onExamCreated }) => {
 const TeacherDashboard = () => {
   const navigate = useNavigate();
   const [activeView, setActiveView] = useState('profile');
-  
-  // Данные учителя, сохраненные в localStorage
-  const teacherName = localStorage.getItem('teacherName') || localStorage.getItem('userName') || 'Teacher Name';
+
+  // Извлекаем данные преподавателя из localStorage
+  const teacherName = localStorage.getItem('teacherName') || 'Teacher Name';
   const teacherEmail = localStorage.getItem('teacherEmail') || 'teacher@example.com';
   const subject = localStorage.getItem('subject') || 'Subject';
   const role = localStorage.getItem('role') || 'teacher';
-  
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
@@ -282,13 +278,12 @@ const TeacherDashboard = () => {
     localStorage.removeItem('teacherID');
     navigate('/');
   };
-  
+
   const handleExamCreated = (exam) => {
     console.log('Exam created:', exam);
-    // После создания экзамена возвращаемся к просмотру профиля
     setActiveView('profile');
   };
-  
+
   return (
     <div className="dashboard-container">
       <aside className="sidebar">
@@ -309,19 +304,19 @@ const TeacherDashboard = () => {
           <ul>
             <li>
               <Link to="#" onClick={() => setActiveView('profile')}>
-                <FaHome className="menu-icon" />
+                <FaHome className="menu-icon" /> 
                 <span>Home / Profile</span>
               </Link>
             </li>
             <li>
               <Link to="#" onClick={() => setActiveView('createExam')}>
-                <FaBook className="menu-icon" />
+                <FaBook className="menu-icon" /> 
                 <span>Create Exam</span>
               </Link>
             </li>
             <li>
               <Link to="/teacher-settings">
-                <FaCog className="menu-icon" />
+                <FaCog className="menu-icon" /> 
                 <span>Settings</span>
               </Link>
             </li>
@@ -334,22 +329,19 @@ const TeacherDashboard = () => {
       </aside>
       <main className="dashboard-content">
         {activeView === 'profile' && (
-          <>
+          <div>
             <h2>Teacher Profile</h2>
             <p>
-              Welcome, {teacherName}! This is your profile page where you can view your personal information and the list of exams you have created.
+              Welcome, {teacherName}! This is your profile page where you can view your personal information and manage your exams.
             </p>
             <ul>
               <li><strong>Email:</strong> {teacherEmail}</li>
               <li><strong>Subject:</strong> {subject}</li>
             </ul>
-          </>
+          </div>
         )}
         {activeView === 'createExam' && (
-          <CreateExamForm
-            onCancel={() => setActiveView('profile')}
-            onExamCreated={handleExamCreated}
-          />
+          <CreateExamForm onCancel={() => setActiveView('profile')} onExamCreated={handleExamCreated} />
         )}
       </main>
     </div>
@@ -357,3 +349,4 @@ const TeacherDashboard = () => {
 };
 
 export default TeacherDashboard;
+

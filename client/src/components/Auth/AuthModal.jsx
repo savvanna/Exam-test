@@ -52,14 +52,14 @@ const AuthModal = ({ onClose }) => {
         localStorage.setItem('role', response.data.role); // либо resRole
   
         if (role === 'teacher') {
-          // Для учителя ожидаем TeacherName, Subject, Email и т.п.
-          const { TeacherName, Email, Subject } = response.data;
+          const { TeacherName, Email, Subject, TeacherID } = response.data;
           localStorage.setItem('teacherName', TeacherName);
           localStorage.setItem('teacherEmail', Email);
           localStorage.setItem('subject', Subject);
-          console.log("Teacher token saved, teacherName:", TeacherName, "Subject:", Subject);
+          localStorage.setItem('teacherID', TeacherID);
           navigate('/teacher-dashboard');
-        } else {
+        }
+         else {
           // Для студента ожидаем StudentName, RegistrationDate, GroupName, Email и т.п.
           const { StudentName, Email, RegistrationDate, GroupName } = response.data;
           localStorage.setItem('studentName', StudentName);
