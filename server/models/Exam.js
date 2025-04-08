@@ -1,3 +1,4 @@
+// exam.js
 module.exports = (sequelize, DataTypes) => {
   const Exam = sequelize.define('Exam', {
     ExamID: {
@@ -26,12 +27,10 @@ module.exports = (sequelize, DataTypes) => {
     });
     Exam.hasMany(models.Question, {
       foreignKey: 'ExamID',
-      as: 'questions',
-      as: 'questions',
+      as: 'questions', // Используем alias 'questions' (все строчные)
     });
     Exam.hasMany(models.Result, {
       foreignKey: 'ExamID',
-      as: 'results',
       as: 'results',
     });
   };
