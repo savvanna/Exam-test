@@ -68,15 +68,14 @@ const StudentDashboard = () => {
   // При выборе экзамена происходит дополнительный запрос для получения деталей (с вопросами)
   const handleSelectExam = async (exam) => {
     try {
-      // Допустим, серверный маршрут для получения детальной информации – GET /exams/:examId
       const baseURL =
         process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
       const token = localStorage.getItem('token');
       const response = await axios.get(`${baseURL}/exams/${exam.ExamID}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // Данные должны содержать поле Questions. Если его нет - устанавливаем пустой массив.
-      const detailedExam = { ...response.data, Questions: response.data.Questions || [] };
+      // Используем правильное имя поля 'questions', как возвращает сервер.
+      const detailedExam = { ...response.data, questions: response.data.questions || [] };
       setSelectedExam(detailedExam);
       setAnswers({});
       setResult(null);
@@ -96,16 +95,16 @@ const StudentDashboard = () => {
   // Обработка завершения экзамена: сверяем ответы студента с правильными
   const handleExamSubmit = (e) => {
     e.preventDefault();
-    if (!selectedExam || !selectedExam.Questions) {
+    if (!selectedExam || !selectedExam.questions) {
       return;
     }
     let correctCount = 0;
-    selectedExam.Questions.forEach((q, idx) => {
+    selectedExam.questions.forEach((q, idx) => {
       if (answers[idx] === q.CorrectAnswer) {
         correctCount++;
       }
     });
-    setResult({ score: correctCount, total: selectedExam.Questions.length });
+    setResult({ score: correctCount, total: selectedExam.questions.length });
     setActiveView('result');
   };
 
@@ -161,8 +160,8 @@ const StudentDashboard = () => {
           <strong>Дата экзамена:</strong> {new Date(selectedExam.Date).toLocaleDateString()}
         </p>
         <form onSubmit={handleExamSubmit} className="exam-form">
-          {selectedExam.Questions && selectedExam.Questions.length > 0 ? (
-            selectedExam.Questions.map((q, idx) => (
+          {selectedExam.questions && selectedExam.questions.length > 0 ? (
+            selectedExam.questions.map((q, idx) => (
               <div key={idx} className="question-block">
                 <div className="question-header">
                   <h4>Вопрос {idx + 1}</h4>
