@@ -7,6 +7,8 @@ const authStudentRoutes = require('./server/routes/authStudent');
 const examRoutes = require('./server/routes/exams');
 const questionRoutes = require('./server/routes/questions');
 const resultRoutes = require('./server/routes/results');
+const studentRoutes = require('./server/routes/students');
+const assignmentRoutes = require('./server/routes/assignments');
 const db = require('./server/models');
 
 dotenv.config();
@@ -24,6 +26,8 @@ app.use('/auth/student', authStudentRoutes);
 app.use('/exams', examRoutes);
 app.use('/questions', questionRoutes);
 app.use('/results', resultRoutes);
+app.use('/students', studentRoutes);
+app.use('/assignments', assignmentRoutes);
 
 // Sync database and start server
 sequelize.authenticate()

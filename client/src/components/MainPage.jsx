@@ -6,7 +6,7 @@ import AuthModal from './Auth/AuthModal';
 
 const MainPage = () => {
   // Если пользователь авторизован, обязательно сохраняйте ключи в localStorage:
-  // Например, для учителя: teacherName, teacherEmail, subject, role, token;
+  // Например, для учителя: teacherName, teacherEmail, role, token;
   // для студента: studentName, studentEmail, registrationDate, groupName, role, token.
   const token = localStorage.getItem('token');
   const userName = localStorage.getItem('teacherName') ||

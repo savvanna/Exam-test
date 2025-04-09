@@ -52,10 +52,9 @@ const AuthModal = ({ onClose }) => {
         localStorage.setItem('role', response.data.role); // либо resRole
   
         if (role === 'teacher') {
-          const { TeacherName, Email, Subject, TeacherID } = response.data;
+          const { TeacherName, Email, TeacherID } = response.data;
           localStorage.setItem('teacherName', TeacherName);
           localStorage.setItem('teacherEmail', Email);
-          localStorage.setItem('subject', Subject);
           localStorage.setItem('teacherID', TeacherID);
           navigate('/teacher-dashboard');
         }

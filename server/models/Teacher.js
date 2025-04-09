@@ -13,10 +13,6 @@ module.exports = (sequelize, DataTypes) => {
         isEmail: true,
       },
     },
-    Subject: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     Password: {
       type: DataTypes.STRING,
       allowNull: false,

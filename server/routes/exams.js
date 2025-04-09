@@ -1,3 +1,4 @@
+// server/routes/exams.js
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
@@ -27,7 +28,7 @@ router.get('/:examId', async (req, res) => {
       include: [
         {
           model: Question,
-          as: 'questions', // обязательно со строчной буквы, совпадает с определением ассоциации
+          as: 'questions', // имя alias должно совпадать с определением ассоциации
         },
       ],
     });
@@ -80,7 +81,8 @@ router.post('/detailed', authMiddleware, async (req, res) => {
                 "B": "Зелёный",
                 "C": "Жёлтый",
                 "D": "Синий"
-            }
+            },
+            "CorrectAnswer": "A"
          },
          ...
       ]
@@ -105,16 +107,19 @@ router.post('/detailed', authMiddleware, async (req, res) => {
     const createdQuestions = [];
     for (let i = 0; i < Questions.length; i++) {
       const q = Questions[i];
-      if (!q.Text || !q.Type || !q.Answers) {
+      if (!q.Text || !q.Type || !q.Answers || !q.CorrectAnswer) {
         await transaction.rollback();
-        return res.status(400).json({ message: `Question ${i + 1} is missing required fields.` });
+        return res
+          .status(400)
+          .json({ message: `Question ${i + 1} is missing required fields.` });
       }
       const question = await Question.create(
         {
           ExamID: exam.ExamID,
           Text: q.Text,
           Type: q.Type,
-          Answers: q.Answers
+          Answers: q.Answers,
+          CorrectAnswer: q.CorrectAnswer // сохраняем правильный вариант ответа
         },
         { transaction }
       );
