@@ -26,46 +26,44 @@ const AuthModal = ({ onClose }) => {
     setActiveTab(tab);
   };
 
-  // Пример обработчика логина для студента в AuthModal.jsx
+  // Обработчик логина
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setError('');
     const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
-  
+
     try {
-      // Определяем нужный endpoint в зависимости от роли
-      const loginRoute = role === 'teacher' 
-        ? '/auth/teacher/login' 
+      // Определяем endpoint в зависимости от роли
+      const loginRoute = role === 'teacher'
+        ? '/auth/teacher/login'
         : '/auth/student/login';
-  
-      // Отправляем POST-запрос с теми же ключами, что и в Postman
+
       const response = await axios.post(`${baseURL}${loginRoute}`, {
         Email: loginEmail,
         Password: loginPassword,
       });
-  
-      // Если сервер возвращает токен, продолжаем авторизацию
+
       const { token } = response.data;
-  
+
       if (token) {
         localStorage.setItem('token', token);
         localStorage.setItem('role', response.data.role); // либо resRole
-  
+
         if (role === 'teacher') {
           const { TeacherName, Email, TeacherID } = response.data;
           localStorage.setItem('teacherName', TeacherName);
           localStorage.setItem('teacherEmail', Email);
           localStorage.setItem('teacherID', TeacherID);
           navigate('/teacher-dashboard');
-        }
-         else {
-          // Для студента ожидаем StudentName, RegistrationDate, GroupName, Email и т.п.
-          const { StudentName, Email, RegistrationDate, GroupName } = response.data;
+        } else {
+          // Для студента — используем имена полей, как возвращает сервер: groupName (с маленькой буквы) и studentID
+          const { StudentName, Email, RegistrationDate, groupName, studentID } = response.data;
           localStorage.setItem('studentName', StudentName);
           localStorage.setItem('studentEmail', Email);
           localStorage.setItem('registrationDate', RegistrationDate);
-          localStorage.setItem('groupName', GroupName);
-          console.log("Student token saved, studentName:", StudentName, "GroupName:", GroupName);
+          localStorage.setItem('groupName', groupName);
+          localStorage.setItem('studentID', studentID);
+          console.log("Student token saved, studentName:", StudentName, "groupName:", groupName, "studentID:", studentID);
           navigate('/student-dashboard');
         }
         onClose();
@@ -76,11 +74,8 @@ const AuthModal = ({ onClose }) => {
       setError('Login error: ' + JSON.stringify(err));
     }
   };
-  
-  
-  
 
-
+  // Обработчик регистрации + авто логин
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -104,7 +99,22 @@ const AuthModal = ({ onClose }) => {
       if (token) {
         localStorage.setItem('token', token);
         localStorage.setItem('role', resRole);
-        navigate(resRole === 'teacher' ? '/teacher-dashboard' : '/student-dashboard');
+        if (resRole === 'teacher') {
+          const { TeacherName, Email, TeacherID } = response.data;
+          localStorage.setItem('teacherName', TeacherName);
+          localStorage.setItem('teacherEmail', Email);
+          localStorage.setItem('teacherID', TeacherID);
+          navigate('/teacher-dashboard');
+        } else {
+          // Для студента возвращаем те же поля: StudentName, Email, RegistrationDate, groupName, studentID
+          const { StudentName, Email, RegistrationDate, groupName, studentID } = response.data;
+          localStorage.setItem('studentName', StudentName);
+          localStorage.setItem('studentEmail', Email);
+          localStorage.setItem('registrationDate', RegistrationDate);
+          localStorage.setItem('groupName', groupName);
+          localStorage.setItem('studentID', studentID);
+          navigate('/student-dashboard');
+        }
         onClose();
       } else {
         setError('Auto login failed: Invalid credentials');

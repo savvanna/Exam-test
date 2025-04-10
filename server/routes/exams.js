@@ -93,13 +93,13 @@ router.post('/detailed', authMiddleware, async (req, res) => {
     return res.status(400).json({ message: 'Title, Date and at least one question are required.' });
   }
 
-  const TeacherID = req.userId;
+  const TeacherID = req.userId; // authMiddleware должен выставлять req.userId
   const teacher = await Teacher.findByPk(TeacherID);
   if (!teacher) {
     return res.status(400).json({ message: 'Teacher not found.' });
   }
 
-  // Запускаем транзакцию для атомарного выполнения операций
+  // Запускаем транзакцию для атомарности операции
   const transaction = await db.sequelize.transaction();
   try {
     const exam = await Exam.create({ Title, Date, TeacherID }, { transaction });
@@ -109,9 +109,7 @@ router.post('/detailed', authMiddleware, async (req, res) => {
       const q = Questions[i];
       if (!q.Text || !q.Type || !q.Answers || !q.CorrectAnswer) {
         await transaction.rollback();
-        return res
-          .status(400)
-          .json({ message: `Question ${i + 1} is missing required fields.` });
+        return res.status(400).json({ message: `Question ${i + 1} is missing required fields.` });
       }
       const question = await Question.create(
         {
@@ -119,7 +117,7 @@ router.post('/detailed', authMiddleware, async (req, res) => {
           Text: q.Text,
           Type: q.Type,
           Answers: q.Answers,
-          CorrectAnswer: q.CorrectAnswer // сохраняем правильный вариант ответа
+          CorrectAnswer: q.CorrectAnswer,
         },
         { transaction }
       );
@@ -129,12 +127,41 @@ router.post('/detailed', authMiddleware, async (req, res) => {
     res.status(201).json({
       message: 'Exam and questions created successfully',
       exam,
-      questions: createdQuestions
+      questions: createdQuestions,
     });
   } catch (error) {
     await transaction.rollback();
     console.error('Error creating detailed exam:', error);
     res.status(500).json({ message: 'Error creating detailed exam', error: error.message });
+  }
+});
+
+// POST /exams/assign - назначение экзамена студентам
+router.post('/assign', authMiddleware, async (req, res) => {
+  const { examId, studentIds } = req.body;
+
+  if (!examId || !studentIds || studentIds.length === 0) {
+    return res.status(400).json({ message: 'Exam ID and at least one student ID are required.' });
+  }
+
+  try {
+    // Для каждого студента обновляем поле assignedExams (хранит массив ID экзаменов)
+    await Promise.all(
+      studentIds.map(async (studentId) => {
+        const student = await db.Student.findByPk(studentId);
+        if (student) {
+          const updatedExams = student.assignedExams
+            ? [...student.assignedExams, examId]
+            : [examId];
+          await student.update({ assignedExams: updatedExams });
+        }
+      })
+    );
+
+    res.status(201).json({ message: 'Exam successfully assigned to students.' });
+  } catch (error) {
+    console.error('Error assigning exam:', error);
+    res.status(500).json({ message: 'Error assigning exam', error: error.message });
   }
 });
 

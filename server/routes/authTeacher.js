@@ -42,7 +42,6 @@ router.post('/login', async (req, res) => {
     if (!passwordMatch) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
-    // Изменяем здесь: вместо { userId: user.TeacherID, ... } используем { id: user.TeacherID, ... }
     const token = jwt.sign(
       { id: user.TeacherID, role: 'teacher' },
       process.env.JWT_SECRET,

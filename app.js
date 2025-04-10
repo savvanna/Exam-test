@@ -1,3 +1,4 @@
+// server/app.js
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -8,7 +9,7 @@ const examRoutes = require('./server/routes/exams');
 const questionRoutes = require('./server/routes/questions');
 const resultRoutes = require('./server/routes/results');
 const studentRoutes = require('./server/routes/students');
-const assignmentRoutes = require('./server/routes/assignments');
+const assignmentRoutes = require('./server/routes/assignments'); // маршрут для получения назначенных экзаменов
 const db = require('./server/models');
 
 dotenv.config();
@@ -30,7 +31,8 @@ app.use('/students', studentRoutes);
 app.use('/assignments', assignmentRoutes);
 
 // Sync database and start server
-sequelize.authenticate()
+sequelize
+  .authenticate()
   .then(() => {
     console.log('Connection has been established successfully.');
     return db.sequelize.sync({ alter: true });
@@ -40,6 +42,6 @@ sequelize.authenticate()
       console.log(`Server is running on port ${port}`);
     });
   })
-  .catch(err => {
+  .catch((err) => {
     console.error('Unable to connect to the database:', err);
   });

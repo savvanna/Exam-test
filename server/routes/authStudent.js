@@ -8,7 +8,7 @@ const Student = db.Student;
 router.post('/register', async (req, res) => {
   console.log('[Student Register]', req.body);
   try {
-    // Из запроса берем поля (без username, так как его больше нет)
+    // Из запроса берем поля
     const { password, Email, StudentName, groupName } = req.body;
     const existingStudent = await Student.findOne({ where: { Email } });
     if (existingStudent) {
@@ -43,27 +43,26 @@ router.post('/login', async (req, res) => {
     if (!passwordMatch) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
+    // Формируем JWT с идентификатором студента
     const token = jwt.sign(
-      { userId: student.StudentID, role: 'student' },
+      { id: student.StudentID, role: 'student' },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
-    // Возвращаем все необходимые данные, включая groupName (обратите внимание на регистр!)
+    // Возвращаем все необходимые данные, включая StudentID
     res.json({
       token,
       role: 'student',
+      studentID: student.StudentID, // именно small-case значение, чтобы на клиенте сохранить как "studentID"
       StudentName: student.StudentName,
       Email: student.Email,
       RegistrationDate: student.RegistrationDate,
-      GroupName: student.groupName  // используем именно student.groupName, как в модели
+      groupName: student.groupName  // имя поля соответствует модели
     });
   } catch (error) {
     console.error('Student login error:', error);
     res.status(500).json({ message: 'Error logging in' });
   }
 });
-
-
-
 
 module.exports = router;

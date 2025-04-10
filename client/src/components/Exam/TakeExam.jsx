@@ -1,11 +1,16 @@
+// client/src/components/TakeExam.jsx
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../styles/CreateExam.css';
 
 const TakeExam = () => {
-  const { examId } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
+  
+  // Извлекаем examId из query-параметров, например: /take-exam?examId=123
+  const examId = new URLSearchParams(location.search).get('examId');
+
   const [exam, setExam] = useState(null);
   const [answers, setAnswers] = useState({}); // {questionIndex: selectedOptionLetter}
   const [loading, setLoading] = useState(true);
@@ -17,7 +22,7 @@ const TakeExam = () => {
       try {
         const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
         const token = localStorage.getItem('token');
-        // Запрашиваем детальную информацию об экзамене по его id
+        // Получаем детальную информацию об экзамене по его id
         const response = await axios.get(`${baseURL}/exams/${examId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -29,22 +34,29 @@ const TakeExam = () => {
         setLoading(false);
       }
     };
-    fetchExam();
+    if (examId) {
+      fetchExam();
+    } else {
+      setError('Не задан examId');
+      setLoading(false);
+    }
   }, [examId]);
 
   const handleAnswerChange = (questionIdx, option) => {
-    setAnswers({ ...answers, [questionIdx]: option });
+    setAnswers((prev) => ({ ...prev, [questionIdx]: option }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     let correctCount = 0;
-    exam.Questions.forEach((q, idx) => {
+    // Обрабатываем оба варианта именования поля с вопросами: questions или Questions
+    const questions = exam?.Questions || exam?.questions || [];
+    questions.forEach((q, idx) => {
       if (answers[idx] === q.CorrectAnswer) {
-        correctCount += 1;
+        correctCount++;
       }
     });
-    setResult({ score: correctCount, total: exam.Questions.length });
+    setResult({ score: correctCount, total: questions.length });
   };
 
   if (loading) {
@@ -62,6 +74,9 @@ const TakeExam = () => {
       </div>
     );
   }
+
+  // Используем questions из объекта экзамена (поддерживая два варианта имен)
+  const questions = exam?.Questions || exam?.questions || [];
 
   return (
     <div className="exam-container">
@@ -85,7 +100,7 @@ const TakeExam = () => {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="exam-form">
-          {exam.Questions.map((q, idx) => (
+          {questions.map((q, idx) => (
             <div key={idx} className="question-block">
               <div className="question-header">
                 <h4>Вопрос {idx + 1}</h4>

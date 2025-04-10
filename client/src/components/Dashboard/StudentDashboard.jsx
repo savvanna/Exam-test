@@ -15,21 +15,22 @@ import '../../styles/CreateExam.css';
 const StudentDashboard = () => {
   const navigate = useNavigate();
 
-  // Режимы: 'profile', 'selectExam', 'takeExam', 'result'
+  // Режимы: 'profile', 'allExams', 'assignedExams', 'result'
   const [activeView, setActiveView] = useState('profile');
-  
-  // Состояния для ручного выбора экзамена (selectExam, takeExam по активности учебного материала)
-  const [exams, setExams] = useState([]); // список экзаменов (используется в режиме "selectExam")
-  const [selectedExam, setSelectedExam] = useState(null); // детальная информация выбранного экзамена
-  const [examLoading, setExamLoading] = useState(false);
-  const [examError, setExamError] = useState('');
-  const [answers, setAnswers] = useState({}); // {questionIndex: selectedOptionLetter}
-  const [result, setResult] = useState(null);
 
-  // Новые состояния для загруженных назначенных экзаменов (учебное задание, пришедшее от преподавателя)
+  // Состояния для просмотра всех экзаменов (режим "Take Exam")
+  const [exams, setExams] = useState([]);
+  const [allExamLoading, setAllExamLoading] = useState(false);
+  const [allExamError, setAllExamError] = useState('');
+
+  // Состояния для просмотра назначённых экзаменов (режим "Assign Exam")
   const [pendingAssignments, setPendingAssignments] = useState([]);
   const [assignmentsLoading, setAssignmentsLoading] = useState(false);
   const [assignmentsError, setAssignmentsError] = useState('');
+
+  // Если планируется реализовывать дополнительную логику прохождения экзамена:
+  // (пока не используется, но для блока "result" требуется переменная result)
+  const [result, setResult] = useState(null);
 
   // Данные студента из localStorage
   const studentName = localStorage.getItem('studentName') || 'Student Name';
@@ -37,7 +38,6 @@ const StudentDashboard = () => {
   const registrationDate = localStorage.getItem('registrationDate') || 'N/A';
   const groupName = localStorage.getItem('groupName') || 'Group';
   const role = localStorage.getItem('role') || 'student';
-  // Необходимо сохранить также StudentID, если он передаётся при логине:
   const studentID = localStorage.getItem('studentID') || null;
 
   const handleLogout = () => {
@@ -51,88 +51,46 @@ const StudentDashboard = () => {
     navigate('/');
   };
 
-  // При переходе в режим выбора экзамена (ручной выбор) получаем список экзаменов
+  // Вспомогательная функция для форматирования даты
+  const formatDate = (dateStr) => {
+    const d = new Date(dateStr);
+    return isNaN(d.getTime()) ? 'N/A' : d.toLocaleDateString();
+  };
+
+  // Если выбран режим "allExams", запрашиваем все экзамены
   useEffect(() => {
-    if (activeView === 'selectExam') {
-      const fetchExams = async () => {
+    if (activeView === 'allExams') {
+      const fetchAllExams = async () => {
+        setAllExamLoading(true);
         try {
-          const baseURL =
-            process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+          const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
           const token = localStorage.getItem('token');
           const response = await axios.get(`${baseURL}/exams`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           setExams(response.data);
-          setExamError('');
-        } catch (err) {
-          console.error('Ошибка получения экзаменов:', err);
-          setExamError('Ошибка загрузки экзаменов');
+          setAllExamError('');
+        } catch (error) {
+          console.error('Ошибка получения всех экзаменов:', error);
+          setAllExamError('Ошибка загрузки экзаменов');
         } finally {
-          setExamLoading(false);
+          setAllExamLoading(false);
         }
       };
-      setExamLoading(true);
-      fetchExams();
+      fetchAllExams();
     }
   }, [activeView]);
 
-  // При выборе экзамена происходит дополнительный запрос для получения деталей (с вопросами)
-  const handleSelectExam = async (exam) => {
-    try {
-      const baseURL =
-        process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${baseURL}/exams/${exam.ExamID}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      // Используем правильное имя поля 'questions', как возвращает сервер.
-      const detailedExam = { ...response.data, questions: response.data.questions || [] };
-      setSelectedExam(detailedExam);
-      setAnswers({});
-      setResult(null);
-      setActiveView('takeExam'); // Переключаемся в режим прохождения экзамена
-    } catch (error) {
-      console.error('Ошибка получения деталей экзамена:', error);
-      setExamError('Ошибка загрузки выбранного экзамена');
-      setActiveView('selectExam');
-    }
-  };
-
-  // Сохраняем выбранный вариант ответа для конкретного вопроса
-  // eslint-disable-next-line no-unused-vars
-const handleAnswerChange = (questionIdx, option) => {
-  setAnswers((prev) => ({ ...prev, [questionIdx]: option }));
-};
-
-// eslint-disable-next-line no-unused-vars
-const handleExamSubmit = (e) => {
-  e.preventDefault();
-  if (!selectedExam || !selectedExam.questions) {
-    return;
-  }
-  let correctCount = 0;
-  selectedExam.questions.forEach((q, idx) => {
-    if (answers[idx] === q.CorrectAnswer) {
-      correctCount++;
-    }
-  });
-  setResult({ score: correctCount, total: selectedExam.questions.length });
-  setActiveView('result');
-};
-
-
-  // При переключении на режим "takeExam" (назначенные экзамены), загружаем назначенные экзамены для студента
+  // Если выбран режим "assignedExams", запрашиваем назначенные экзамены для студента
   useEffect(() => {
-    if (activeView === 'takeExam' && studentID) {
+    if (activeView === 'assignedExams' && studentID) {
       const fetchAssignments = async () => {
         setAssignmentsLoading(true);
         try {
-          const baseURL =
-            process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+          const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
           const token = localStorage.getItem('token');
-          // Запрос к API для получения назначенных экзаменов для данного студента:
-          // Ожидается, что API GET /assignments?studentId=... возвращает массив объектов с полями:
-          // assignmentId, examId, examTitle, assignedDate
+          // Ожидается, что API GET /assignments?studentId=... возвращает массив объектов с полями: 
+          // assignmentId, examId (или ExamID), examTitle (или Title) и assignedDate
           const response = await axios.get(`${baseURL}/assignments?studentId=${studentID}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
@@ -148,6 +106,12 @@ const handleExamSubmit = (e) => {
       fetchAssignments();
     }
   }, [activeView, studentID]);
+
+  // Функция для перехода к прохождению экзамена по его examId
+  const handleTakeExam = (examId) => {
+    console.log('ExamId для прохождения:', examId);
+    navigate(`/take-exam?examId=${examId}`);
+  };
 
   // Функция рендеринга содержимого в зависимости от activeView
   const renderContent = () => {
@@ -165,39 +129,54 @@ const handleExamSubmit = (e) => {
           </ul>
         </div>
       );
-    } else if (activeView === 'selectExam') {
+    } else if (activeView === 'allExams') {
       return (
         <div className="exam-container">
-          <h2>Выберите экзамен для прохождения</h2>
-          {examLoading ? (
+          <h2>Take Exam – Все экзамены</h2>
+          {allExamLoading ? (
             <p>Загрузка экзаменов...</p>
-          ) : examError ? (
-            <p className="error">{examError}</p>
+          ) : allExamError ? (
+            <p className="error">{allExamError}</p>
           ) : exams.length === 0 ? (
             <p>Нет доступных экзаменов</p>
           ) : (
-            <ul className="exam-list">
-              {exams.map((exam) => (
-                <li key={exam.ExamID} className="exam-item">
-                  <h3>{exam.Title}</h3>
-                  <p><strong>Дата:</strong> {new Date(exam.Date).toLocaleDateString()}</p>
-                  <button className="submit-btn" onClick={() => handleSelectExam(exam)}>
-                    Пройти экзамен
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <div className="assignments-section">
+              <table className="assignments-table">
+                <thead>
+                  <tr>
+                    <th>Exam Title</th>
+                    <th>Exam Date</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {exams.map((exam) => (
+                    <tr key={exam.ExamID}>
+                      <td>{exam.Title}</td>
+                      <td>{formatDate(exam.Date)}</td>
+                      <td>
+                        <button
+                          className="submit-btn"
+                          onClick={() => handleTakeExam(exam.ExamID)}
+                        >
+                          Пройти экзамен
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
           <button className="cancel-btn" onClick={() => setActiveView('profile')}>
             Назад к профилю
           </button>
         </div>
       );
-    } else if (activeView === 'takeExam') {
-      // Если назначенных экзаменов есть, выводим их; если нет, можно показать назначённый экзамен, который мы получили через selectExam
+    } else if (activeView === 'assignedExams') {
       return (
         <div className="exam-container">
-          <h2>Assigned Exams</h2>
+          <h2>Assign Exam – Назначенные экзамены</h2>
           {assignmentsLoading ? (
             <p>Загрузка назначенных экзаменов...</p>
           ) : assignmentsError ? (
@@ -214,16 +193,20 @@ const handleExamSubmit = (e) => {
                 </thead>
                 <tbody>
                   {pendingAssignments.map((assignment) => (
-                    <tr key={assignment.assignmentId}>
-                      <td>{assignment.examTitle}</td>
-                      <td>{new Date(assignment.assignedDate).toLocaleDateString()}</td>
+                    <tr
+                      key={
+                        assignment.assignmentId ||
+                        `assignment-${assignment.examId || assignment.ExamID}`
+                      }
+                    >
+                      <td>{assignment.examTitle || assignment.Title}</td>
+                      <td>{formatDate(assignment.assignedDate)}</td>
                       <td>
                         <button
                           className="submit-btn"
-                          onClick={() => {
-                            // Переход на страницу прохождения экзамена с передачей examId
-                            navigate(`/take-exam?examId=${assignment.examId}`);
-                          }}
+                          onClick={() =>
+                            handleTakeExam(assignment.examId || assignment.ExamID)
+                          }
                         >
                           Пройти экзамен
                         </button>
@@ -234,7 +217,9 @@ const handleExamSubmit = (e) => {
               </table>
             </div>
           ) : (
-            <p>Вам не назначены экзамены. Проверьте позже или выберите экзамен самостоятельно.</p>
+            <p>
+              Вам не назначены экзамены. Проверьте позже или перейдите в раздел "Take Exam", чтобы выбрать экзамен самостоятельно.
+            </p>
           )}
           <button className="cancel-btn" onClick={() => setActiveView('profile')}>
             Назад к профилю
@@ -251,7 +236,7 @@ const handleExamSubmit = (e) => {
           <button className="submit-btn" onClick={() => setActiveView('profile')}>
             Вернуться в профиль
           </button>
-          <button className="cancel-btn" onClick={() => setActiveView('selectExam')}>
+          <button className="cancel-btn" onClick={() => setActiveView('allExams')}>
             Выбрать другой экзамен
           </button>
         </div>
@@ -285,13 +270,18 @@ const handleExamSubmit = (e) => {
               </Link>
             </li>
             <li>
-              {/* Изменяем ссылку Take Exam: переходим в режим assigned exams (takeExam) */}
-              <Link to="#" onClick={() => setActiveView('takeExam')}>
+              {/* Ссылка "Take Exam" – отображает список всех экзаменов */}
+              <Link to="#" onClick={() => setActiveView('allExams')}>
                 <FaClipboardList className="menu-icon" />
                 <span>Take Exam</span>
-                {pendingAssignments.length > 0 && (
-                  <span className="badge">{pendingAssignments.length}</span>
-                )}
+              </Link>
+            </li>
+            <li>
+              {/* Ссылка "Assign Exam" – отображает назначенные экзамены;
+                  Количество выводим в скобках */}
+              <Link to="#" onClick={() => setActiveView('assignedExams')}>
+                <FaClipboardList className="menu-icon" />
+                <span>Assign Exam {pendingAssignments.length > 0 && (<span className="badge">({pendingAssignments.length})</span>)}</span>
               </Link>
             </li>
             <li>
