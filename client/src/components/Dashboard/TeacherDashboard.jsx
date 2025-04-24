@@ -6,10 +6,8 @@ import axios from 'axios';
 import CreateExamForm from '../Exam/CreateExam';
 import '../../styles/Dashboard.css';
 import '../../styles/CreateExam.css';
-// При необходимости можно подключить отдельный файл стилей для студенческой таблицы, например:
-// import '../../styles/TeacherStudents.css';
 
-const TeacherDashboard = () => {
+const TeacherDashboard = ({ setAuth }) => {
   const navigate = useNavigate();
   // activeView: "profile", "createExam" или "students"
   const [activeView, setActiveView] = useState('profile');
@@ -18,10 +16,10 @@ const TeacherDashboard = () => {
   const [studentsData, setStudentsData] = useState([]);
   const [studentsLoading, setStudentsLoading] = useState(false);
   const [studentsError, setStudentsError] = useState('');
-  // Список выбранных студентов (их ID) через чекбоксы
+  // Список выбранных студентов (их ID), например, через чекбоксы
   const [selectedStudents, setSelectedStudents] = useState([]);
 
-  // Новые состояния для экзамена, который назначается
+  // Состояния для экзамена, который назначается
   const [availableExams, setAvailableExams] = useState([]);
   const [selectedExam, setSelectedExam] = useState('');
   // Состояние для показа сообщения (alert) после назначения экзамена
@@ -35,6 +33,7 @@ const TeacherDashboard = () => {
   const teacherEmail = localStorage.getItem('teacherEmail') || 'teacher@example.com';
   const role = localStorage.getItem('role') || 'teacher';
 
+  // Обновлённая функция logout: очищает localStorage, сбрасывает динамичный state и делает навигацию
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
@@ -42,7 +41,8 @@ const TeacherDashboard = () => {
     localStorage.removeItem('teacherEmail');
     localStorage.removeItem('subject');
     localStorage.removeItem('teacherID');
-    navigate('/');
+    setAuth({ token: null, role: null }); // обновляем динамичное состояние аутентификации
+    navigate('/'); // перенаправляем на главную страницу (где будет окно авторизации)
   };
 
   const handleExamCreated = (exam) => {
@@ -143,7 +143,7 @@ const TeacherDashboard = () => {
     }, 3000);
   };
 
-  // Функция рендеринга контента в зависимости от activeView
+  // Функция для рендеринга контента в зависимости от activeView
   const renderContent = () => {
     if (activeView === 'profile') {
       return (

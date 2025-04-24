@@ -4,19 +4,19 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/AuthModal.css';
 
-const AuthModal = ({ onClose }) => {
+const AuthModal = ({ setAuth }) => {
   const [activeTab, setActiveTab] = useState('login'); // "login" или "register"
-  const [role, setRole] = useState('student'); // выбираем роль: teacher или student
+  const [role, setRole] = useState('student');           // выбираем роль: teacher или student
 
   // Поля для логина
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
 
-  // Поля для регистрации (без username)
+  // Поля для регистрации
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
-  const [regName, setRegName] = useState(''); // TeacherName или StudentName
-  const [regGroup, setRegGroup] = useState(''); // Опционально для студентов
+  const [regName, setRegName] = useState('');    // TeacherName или StudentName
+  const [regGroup, setRegGroup] = useState('');  // опционально для студентов
 
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -33,7 +33,6 @@ const AuthModal = ({ onClose }) => {
     const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
     try {
-      // Определяем endpoint в зависимости от роли
       const loginRoute = role === 'teacher'
         ? '/auth/teacher/login'
         : '/auth/student/login';
@@ -44,10 +43,9 @@ const AuthModal = ({ onClose }) => {
       });
 
       const { token } = response.data;
-
       if (token) {
-        localStorage.setItem('token', token);
-        localStorage.setItem('role', response.data.role); // либо resRole
+        // Обновляем auth-стейт
+        setAuth({ token, role: response.data.role });
 
         if (role === 'teacher') {
           const { TeacherName, Email, TeacherID } = response.data;
@@ -56,17 +54,15 @@ const AuthModal = ({ onClose }) => {
           localStorage.setItem('teacherID', TeacherID);
           navigate('/teacher-dashboard');
         } else {
-          // Для студента — используем имена полей, как возвращает сервер: groupName (с маленькой буквы) и studentID
           const { StudentName, Email, RegistrationDate, groupName, studentID } = response.data;
           localStorage.setItem('studentName', StudentName);
           localStorage.setItem('studentEmail', Email);
           localStorage.setItem('registrationDate', RegistrationDate);
           localStorage.setItem('groupName', groupName);
           localStorage.setItem('studentID', studentID);
-          console.log("Student token saved, studentName:", StudentName, "groupName:", groupName, "studentID:", studentID);
+          console.log("Student token saved:", StudentName, groupName, studentID);
           navigate('/student-dashboard');
         }
-        onClose();
       } else {
         setError('Login failed: Invalid credentials');
       }
@@ -82,7 +78,6 @@ const AuthModal = ({ onClose }) => {
     const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
     try {
       const registerRoute = role === 'teacher' ? '/auth/teacher/register' : '/auth/student/register';
-      // Формируем данные регистрации без username, поле зависит от роли
       const registerData =
         role === 'teacher'
           ? { password: regPassword, Email: regEmail, TeacherName: regName }
@@ -91,14 +86,12 @@ const AuthModal = ({ onClose }) => {
       console.log("Register data:", registerData);
       await axios.post(`${baseURL}${registerRoute}`, registerData);
       alert('Registration successful! Logging you in...');
-      // Автоматически выполняем логин после регистрации:
       const loginRoute = role === 'teacher' ? '/auth/teacher/login' : '/auth/student/login';
       const response = await axios.post(`${baseURL}${loginRoute}`, { Email: regEmail, Password: regPassword });
       const { token, role: resRole } = response.data;
       console.log("Auto login response:", response.data);
       if (token) {
-        localStorage.setItem('token', token);
-        localStorage.setItem('role', resRole);
+        setAuth({ token, role: resRole });
         if (resRole === 'teacher') {
           const { TeacherName, Email, TeacherID } = response.data;
           localStorage.setItem('teacherName', TeacherName);
@@ -106,7 +99,6 @@ const AuthModal = ({ onClose }) => {
           localStorage.setItem('teacherID', TeacherID);
           navigate('/teacher-dashboard');
         } else {
-          // Для студента возвращаем те же поля: StudentName, Email, RegistrationDate, groupName, studentID
           const { StudentName, Email, RegistrationDate, groupName, studentID } = response.data;
           localStorage.setItem('studentName', StudentName);
           localStorage.setItem('studentEmail', Email);
@@ -115,7 +107,6 @@ const AuthModal = ({ onClose }) => {
           localStorage.setItem('studentID', studentID);
           navigate('/student-dashboard');
         }
-        onClose();
       } else {
         setError('Auto login failed: Invalid credentials');
       }
@@ -128,7 +119,7 @@ const AuthModal = ({ onClose }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-container">
-        <button className="close-btn" onClick={onClose}>&times;</button>
+        {/* Кнопка закрытия удалена, чтобы окно нельзя было закрыть до авторизации */}
         <div className="tabs">
           <button 
             className={activeTab === 'login' ? 'active' : ''}

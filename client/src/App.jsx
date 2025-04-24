@@ -1,5 +1,5 @@
 // client/src/App.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import MainPage from './components/MainPage';
 import TeacherDashboard from './components/Dashboard/TeacherDashboard';
@@ -7,37 +7,84 @@ import StudentDashboard from './components/Dashboard/StudentDashboard';
 import CreateExam from './components/Exam/CreateExam';
 import TakeExam from './components/Exam/TakeExam';
 import Results from './components/Exam/Results';
+import ModuleTests from './components/ModuleTests/ModuleTests';
 import './styles/App.css';
 
 const App = () => {
-  const isLoggedIn = () => localStorage.getItem('token') !== null;
-  const getRole = () => localStorage.getItem('role');
+  // Инициализируем состояние аутентификации из localStorage
+  const [auth, setAuth] = useState({
+    token: localStorage.getItem('token'),
+    role: localStorage.getItem('role'),
+  });
+
+  // Функция для обновления состояния аутентификации и синхронизации с localStorage
+  const updateAuth = (newAuth) => {
+    if (newAuth.token) {
+      localStorage.setItem('token', newAuth.token);
+      localStorage.setItem('role', newAuth.role);
+    } else {
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+    }
+    setAuth(newAuth);
+  };
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<MainPage />} />
+        <Route
+          path="/"
+          element={
+            auth.token 
+              ? <Navigate to={auth.role === 'teacher' ? "/teacher-dashboard" : "/student-dashboard"} replace /> 
+              : <MainPage setAuth={updateAuth} />
+          }
+        />
         <Route
           path="/teacher-dashboard"
-          element={isLoggedIn() && getRole() === 'teacher' ? <TeacherDashboard /> : <Navigate to="/" />}
+          element={
+            auth.token && auth.role === 'teacher'
+              ? <TeacherDashboard setAuth={updateAuth} />
+              : <Navigate to="/" replace />
+          }
         />
         <Route
           path="/student-dashboard"
-          element={isLoggedIn() && getRole() === 'student' ? <StudentDashboard /> : <Navigate to="/" />}
+          element={
+            auth.token && auth.role === 'student'
+              ? <StudentDashboard setAuth={updateAuth} />
+              : <Navigate to="/" replace />
+          }
         />
         <Route
           path="/create-exam"
-          element={isLoggedIn() && getRole() === 'teacher' ? <CreateExam /> : <Navigate to="/" />}
+          element={
+            auth.token && auth.role === 'teacher'
+              ? <CreateExam />
+              : <Navigate to="/" replace />
+          }
         />
         <Route
           path="/take-exam"
-          element={isLoggedIn() && getRole() === 'student' ? <TakeExam /> : <Navigate to="/" />}
+          element={
+            auth.token && auth.role === 'student'
+              ? <TakeExam />
+              : <Navigate to="/" replace />
+          }
         />
         <Route
           path="/results"
-          element={isLoggedIn() ? <Results /> : <Navigate to="/" />}
+          element={auth.token ? <Results /> : <Navigate to="/" replace />}
         />
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route
+          path="/module-tests"
+          element={
+            auth.token && auth.role === 'student'
+              ? <ModuleTests />
+              : <Navigate to="/" replace />
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
