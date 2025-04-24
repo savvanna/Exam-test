@@ -1,3 +1,4 @@
+// server/models/question.js
 module.exports = (sequelize, DataTypes) => {
   const Question = sequelize.define('Question', {
     QuestionID: {
@@ -17,8 +18,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    Answers: { // Храним ответы как JSON
+    Answers: { // Хранит варианты ответов в формате JSON (ключи: "A", "B" и т.д.)
       type: DataTypes.JSON,
+      allowNull: false,
+    },
+    CorrectAnswer: { // Новое поле для хранения правильного ответа (например, "A")
+      type: DataTypes.STRING,
       allowNull: false,
     },
   });
