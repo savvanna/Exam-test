@@ -7,7 +7,7 @@ import '../../styles/CreateExam.css';
 const TakeExam = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   // Извлекаем examId из query-параметров, например: /take-exam?examId=123
   const examId = new URLSearchParams(location.search).get('examId');
 
@@ -26,6 +26,7 @@ const TakeExam = () => {
         const response = await axios.get(`${baseURL}/exams/${examId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        console.log("Fetched exam:", response.data);
         setExam(response.data);
         setLoading(false);
       } catch (err) {
@@ -49,7 +50,7 @@ const TakeExam = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     let correctCount = 0;
-    // Обрабатываем оба варианта именования поля с вопросами: questions или Questions
+    // Обрабатываем оба варианта именования поля с вопросами: Questions или questions
     const questions = exam?.Questions || exam?.questions || [];
     questions.forEach((q, idx) => {
       if (answers[idx] === q.CorrectAnswer) {
@@ -75,8 +76,9 @@ const TakeExam = () => {
     );
   }
 
-  // Используем questions из объекта экзамена (поддерживая два варианта имен)
+  // Используем вопросы из экзамена (поддерживая оба варианта именования)
   const questions = exam?.Questions || exam?.questions || [];
+  console.log("Exam Questions:", questions);
 
   return (
     <div className="exam-container">
@@ -109,6 +111,16 @@ const TakeExam = () => {
                 <label>Текст вопроса:</label>
                 <p>{q.Text}</p>
               </div>
+              {/* Если преподаватель загрузил изображение для вопроса, отображаем его */}
+              {(q.Image || q.image) && (
+                <div className="question-image">
+                  <img
+                    src={q.Image || q.image}
+                    alt={`Изображение для вопроса ${idx + 1}`}
+                    style={{ maxWidth: '400px', display: 'block', margin: '10px auto' }}
+                  />
+                </div>
+              )}
               <div className="answers-section">
                 <h5>Варианты ответов</h5>
                 {Object.entries(q.Answers).map(([letter, answerText]) => (

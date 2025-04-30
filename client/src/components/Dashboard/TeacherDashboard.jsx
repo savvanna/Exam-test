@@ -148,9 +148,9 @@ const TeacherDashboard = ({ setAuth }) => {
     if (activeView === 'profile') {
       return (
         <div className="profile-section">
-          <h2>Teacher Profile</h2>
+          <h2>Профиль учителя</h2>
           <p>
-            Welcome, {teacherName}! This is your profile page where you can view your personal information and manage your exams.
+            Добро пожаловать, {teacherName}!
           </p>
           <ul>
             <li><strong>Email:</strong> {teacherEmail}</li>
@@ -169,7 +169,7 @@ const TeacherDashboard = ({ setAuth }) => {
     if (activeView === 'students') {
       return (
         <div className="students-section">
-          <h2>Students and Groups</h2>
+          <h2>Сиуденты/группы</h2>
           {/* Блок выбора экзамена для назначения */}
           <div className="assignment-section">
             <label htmlFor="examSelect">Выберите экзамен для назначения:</label>
@@ -228,7 +228,7 @@ const TeacherDashboard = ({ setAuth }) => {
                 </tbody>
               </table>
               <button className="submit-btn" onClick={handleAssignExam}>
-                Assign Exam to Selected Students
+                Назначить экзамен выбранным студентам
               </button>
             </div>
           )}
@@ -259,32 +259,32 @@ const TeacherDashboard = ({ setAuth }) => {
             <li>
               <Link to="#" onClick={() => setActiveView('profile')}>
                 <FaHome className="menu-icon" />
-                <span>Home / Profile</span>
+                <span>Профиль</span>
               </Link>
             </li>
             <li>
               <Link to="#" onClick={() => setActiveView('createExam')}>
                 <FaBook className="menu-icon" />
-                <span>Create Exam</span>
+                <span>Создать экзамен</span>
               </Link>
             </li>
             <li>
               <Link to="#" onClick={() => setActiveView('students')}>
                 <FaUsers className="menu-icon" />
-                <span>Students/Groups</span>
+                <span>Студенты/Группы</span>
               </Link>
             </li>
             <li>
               <Link to="/teacher-settings">
                 <FaCog className="menu-icon" />
-                <span>Settings</span>
+                <span>Настройки</span>
               </Link>
             </li>
           </ul>
         </nav>
         <div className="logout" onClick={handleLogout}>
           <FaSignOutAlt className="menu-icon" />
-          <span>Logout</span>
+          <span>Выйти</span>
         </div>
       </aside>
       <main className="dashboard-content">{renderContent()}</main>
