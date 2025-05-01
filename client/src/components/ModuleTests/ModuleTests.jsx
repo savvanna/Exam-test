@@ -20,7 +20,7 @@ const ModuleTests = () => {
     { id: 2, title: "Behaviour", duration: 15, img: behaviourImg, path: '/module-tests/behaviour' },
     { id: 3, title: "Parking", duration: 5, img: parkingImg, path: '/module-tests/parking' },
     { id: 4, title: "Emergencies", duration: 6, img: emergenciesImg, path: '/module-tests/emergencies' },
-    { id: 5, title: "Road Position", duration: 5, img: roadPosImg, path: '/module-tests/road' },
+    { id: 5, title: "Road Position", duration: 5, img: roadPosImg, path: '/module-tests/roadrules' },
     { id: 6, title: "Intersection", duration: 13, img: intersectionImg, path: '/module-tests/intersection' },
   ];
 

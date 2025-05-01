@@ -146,7 +146,7 @@ const BehaviourModule = () => {
 
   return (
     <div className="exam-container">
-      <h2>Тест по модулю Behaviour</h2>
+      <h2>Тест по модулю Действия при езде</h2>
       <form onSubmit={handleSubmitTest} className="exam-form">
         {questions.map((q, index) => (
           <div key={index} className="question-block">
