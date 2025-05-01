@@ -87,7 +87,7 @@ const CoreModule = () => {
 
   return (
     <div className="exam-container">
-      <h2>Тест по модулю Core</h2>
+      <h2>Тест по модулю Общие Правила</h2>
       <form onSubmit={handleSubmitTest} className="exam-form">
         {questions.map((q, index) => (
           <div key={index} className="question-block">

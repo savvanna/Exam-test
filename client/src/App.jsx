@@ -13,6 +13,7 @@ import BehaviourModule from './components/ModuleTests/BehaviourModule';
 import ParkingModule from './components/ModuleTests/ParkingModule';
 import EmergenciesModule from './components/ModuleTests/EmergenciesModule';
 import RoadRulesModule from './components/ModuleTests/RoadRulesModule';
+import IntersectionModule from './components/ModuleTests/IntersectionModule';
 import ModuleTestResult from './components/ModuleTests/ModuleTestResult';
 import './styles/App.css';
 
@@ -97,6 +98,7 @@ const App = () => {
         <Route path="/module-tests/parking" element={<ParkingModule />} />
         <Route path="/module-tests/emergencies" element={<EmergenciesModule />} />
         <Route path="/module-tests/roadrules" element={<RoadRulesModule />} />
+        <Route path="/module-tests/intersection" element={<IntersectionModule />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

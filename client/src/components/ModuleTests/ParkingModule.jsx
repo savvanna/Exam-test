@@ -139,7 +139,7 @@ const ParkingModule = () => {
 
   return (
     <div className="exam-container">
-      <h2>Тест по модулю Parking</h2>
+      <h2>Тест по модулю Правила парковки</h2>
       <form onSubmit={handleSubmitTest} className="exam-form">
         {questions.map((q, index) => (
           <div key={index} className="question-block">
