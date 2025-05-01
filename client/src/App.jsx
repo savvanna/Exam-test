@@ -9,6 +9,7 @@ import TakeExam from './components/Exam/TakeExam';
 import Results from './components/Exam/Results';
 import ModuleTests from './components/ModuleTests/ModuleTests';
 import CoreModule from './components/ModuleTests/CoreModule';
+import BehaviourModule from './components/ModuleTests/BehaviourModule';
 import ModuleTestResult from './components/ModuleTests/ModuleTestResult';
 import './styles/App.css';
 
@@ -88,6 +89,7 @@ const App = () => {
         />
         {/* Добавляем маршруты для отдельных модулей */}
         <Route path="/module-tests/core" element={<CoreModule />} />
+        <Route path="/module-tests/behaviour" element={<BehaviourModule />} />
         <Route path="/module-tests/result" element={<ModuleTestResult />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
