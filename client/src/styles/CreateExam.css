@@ -9,7 +9,7 @@
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  text-align: left; /* важно, чтобы текст был слева */
+  text-align: left;
 }
 
 .exam-container h2 {
@@ -53,28 +53,59 @@
   margin-bottom: 10px;
 }
 
-/* Новый вариант для выравнивания вариантов ответа */
+/* Контейнер заголовка вопроса */
+.question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* Кнопка "Удалить вопрос" */
+.remove-btn {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.remove-btn:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+}
+
+/* Стили для вариантов ответа */
 .answer-option {
   margin-bottom: 8px;
-}
-
-.option-label {
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* выравниваем по левому краю */
-}
-
-.option-radio {
-  margin-right: 8px;
-  flex-shrink: 0;
 }
 
 .option-text {
   flex-grow: 1;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 16px;
+  border: none;             /* убираем все границы */
+  outline: none;
   text-align: left;
+  -webkit-appearance: none; /* отменяем стандартное оформление в Chrome и Safari */
+  -moz-appearance: none;
+  appearance: none;
 }
 
-/* Кнопки */
+
+.option-text:focus {
+  border-bottom-color: #007bff;
+  outline: none;
+}
+
+
+/* Стили для кнопок */
 .add-answer-btn,
 .add-question-btn,
 .submit-btn {
@@ -102,28 +133,4 @@
     padding: 15px;
     margin: 20px;
   }
-}
-/* Контейнер заголовка вопроса: выравнивание текста и кнопки по краям */
-.question-header {
-  display: flex;
-  justify-content: space-between; /* разделяет заголовок и кнопку по краям */
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-/* Стили для кнопки "Удалить вопрос" */
-.remove-btn {
-  background-color: #dc3545;  /* красный фон */
-  color: #fff;                /* белый текст */
-  border: none;
-  border-radius: 4px;
-  padding: 5px 10px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.remove-btn:hover {
-  background-color: #c82333;
-  transform: translateY(-2px);
 }

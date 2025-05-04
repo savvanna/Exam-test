@@ -137,6 +137,9 @@ router.post('/assign', authMiddleware, async (req, res) => {
             ? [...student.assignedExams, examId]
             : [examId];
           await student.update({ assignedExams: updatedExams });
+          // Дополнительный лог для проверки
+          const updatedStudent = await student.reload();
+          console.log(`Student ${studentId} assignedExams:`, updatedStudent.assignedExams);
         }
       })
     );
@@ -147,5 +150,6 @@ router.post('/assign', authMiddleware, async (req, res) => {
     res.status(500).json({ message: 'Error assigning exam', error: error.message });
   }
 });
+
 
 module.exports = router;

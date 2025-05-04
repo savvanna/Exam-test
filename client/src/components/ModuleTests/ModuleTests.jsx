@@ -15,12 +15,12 @@ const ModuleTests = () => {
 
   // Массив модулей с названием, длительностью, картинкой и маршрутом перехода
   const modules = [
-    { id: 1, title: "Core", duration: 12, img: coreImg, path: '/module-tests/core' },
-    { id: 2, title: "Behaviour", duration: 15, img: behaviourImg, path: '/module-tests/behaviour' },
-    { id: 3, title: "Parking", duration: 5, img: parkingImg, path: '/module-tests/parking' },
-    { id: 4, title: "Emergencies", duration: 6, img: emergenciesImg, path: '/module-tests/emergencies' },
-    { id: 5, title: "Road Position", duration: 5, img: roadPosImg, path: '/module-tests/roadrules' },
-    { id: 6, title: "Intersection", duration: 13, img: intersectionImg, path: '/module-tests/intersection' },
+    { id: 1, title: "Основные", duration: 12, img: coreImg, path: '/module-tests/core' },
+    { id: 2, title: "Действия на дороге", duration: 15, img: behaviourImg, path: '/module-tests/behaviour' },
+    { id: 3, title: "Парковка", duration: 5, img: parkingImg, path: '/module-tests/parking' },
+    { id: 4, title: "Экстренные ситуации", duration: 6, img: emergenciesImg, path: '/module-tests/emergencies' },
+    { id: 5, title: "Позиции на дороге", duration: 5, img: roadPosImg, path: '/module-tests/roadrules' },
+    { id: 6, title: "Перекрёстки", duration: 13, img: intersectionImg, path: '/module-tests/intersection' },
   ];
 
   return (
