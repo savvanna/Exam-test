@@ -129,7 +129,6 @@ router.post('/assign', authMiddleware, async (req, res) => {
   }
 
   try {
-    // Для каждого студента обновляем поле assignedExams (хранит массив ID экзаменов)
     await Promise.all(
       studentIds.map(async (studentId) => {
         const student = await db.Student.findByPk(studentId);

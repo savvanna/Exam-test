@@ -1,4 +1,3 @@
-// server/models/Student.js
 module.exports = (sequelize, DataTypes) => {
   const Student = sequelize.define('Student', {
     StudentID: {
@@ -27,12 +26,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     groupName: {
-      // Поле для хранения информации о группе студента. Может быть null, если группа не указана.
       type: DataTypes.STRING,
       allowNull: true,
     },
     assignedExams: { 
-      // Новое поле — хранит список ID назначенных экзаменов
+      // Хранение назначенных экзаменов как JSON (массив)
       type: DataTypes.JSON,
       defaultValue: [],
     },

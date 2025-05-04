@@ -52,6 +52,7 @@ const TeacherDashboard = ({ setAuth }) => {
 
   // При переключении на view "students" загружаем список студентов и доступных экзаменов
   useEffect(() => {
+    
     if (activeView === 'students') {
       const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
       const token = localStorage.getItem('token');
@@ -71,6 +72,7 @@ const TeacherDashboard = ({ setAuth }) => {
         } finally {
           setStudentsLoading(false);
         }
+        
       };
 
       // Функция для загрузки доступных экзаменов
