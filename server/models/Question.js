@@ -18,13 +18,18 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    Answers: { // Хранит варианты ответов в формате JSON (ключи: "A", "B" и т.д.)
+    Answers: { // Хранит варианты ответов в формате JSON (ключи: "A", "B", ...)
       type: DataTypes.JSON,
       allowNull: false,
     },
-    CorrectAnswer: { // Новое поле для хранения правильного ответа (например, "A")
+    CorrectAnswer: { // Например, "A"
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    // Добавляем новое поле для хранения URL изображения
+    Image: {
+      type: DataTypes.TEXT,
+      allowNull: true,
     },
   });
 

@@ -6,10 +6,8 @@ import axios from 'axios';
 import CreateExamForm from '../Exam/CreateExam';
 import '../../styles/Dashboard.css';
 import '../../styles/CreateExam.css';
-// При необходимости можно подключить отдельный файл стилей для студенческой таблицы, например:
-// import '../../styles/TeacherStudents.css';
 
-const TeacherDashboard = () => {
+const TeacherDashboard = ({ setAuth }) => {
   const navigate = useNavigate();
   // activeView: "profile", "createExam" или "students"
   const [activeView, setActiveView] = useState('profile');
@@ -18,10 +16,10 @@ const TeacherDashboard = () => {
   const [studentsData, setStudentsData] = useState([]);
   const [studentsLoading, setStudentsLoading] = useState(false);
   const [studentsError, setStudentsError] = useState('');
-  // Список выбранных студентов (их ID) через чекбоксы
+  // Список выбранных студентов (их ID), например, через чекбоксы
   const [selectedStudents, setSelectedStudents] = useState([]);
 
-  // Новые состояния для экзамена, который назначается
+  // Состояния для экзамена, который назначается
   const [availableExams, setAvailableExams] = useState([]);
   const [selectedExam, setSelectedExam] = useState('');
   // Состояние для показа сообщения (alert) после назначения экзамена
@@ -35,6 +33,7 @@ const TeacherDashboard = () => {
   const teacherEmail = localStorage.getItem('teacherEmail') || 'teacher@example.com';
   const role = localStorage.getItem('role') || 'teacher';
 
+  // Обновлённая функция logout: очищает localStorage, сбрасывает динамичный state и делает навигацию
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
@@ -42,7 +41,8 @@ const TeacherDashboard = () => {
     localStorage.removeItem('teacherEmail');
     localStorage.removeItem('subject');
     localStorage.removeItem('teacherID');
-    navigate('/');
+    setAuth({ token: null, role: null }); // обновляем динамичное состояние аутентификации
+    navigate('/'); // перенаправляем на главную страницу (где будет окно авторизации)
   };
 
   const handleExamCreated = (exam) => {
@@ -143,14 +143,14 @@ const TeacherDashboard = () => {
     }, 3000);
   };
 
-  // Функция рендеринга контента в зависимости от activeView
+  // Функция для рендеринга контента в зависимости от activeView
   const renderContent = () => {
     if (activeView === 'profile') {
       return (
         <div className="profile-section">
-          <h2>Teacher Profile</h2>
+          <h2>Профиль учителя</h2>
           <p>
-            Welcome, {teacherName}! This is your profile page where you can view your personal information and manage your exams.
+            Добро пожаловать, {teacherName}!
           </p>
           <ul>
             <li><strong>Email:</strong> {teacherEmail}</li>
@@ -169,7 +169,7 @@ const TeacherDashboard = () => {
     if (activeView === 'students') {
       return (
         <div className="students-section">
-          <h2>Students and Groups</h2>
+          <h2>Сиуденты/группы</h2>
           {/* Блок выбора экзамена для назначения */}
           <div className="assignment-section">
             <label htmlFor="examSelect">Выберите экзамен для назначения:</label>
@@ -228,7 +228,7 @@ const TeacherDashboard = () => {
                 </tbody>
               </table>
               <button className="submit-btn" onClick={handleAssignExam}>
-                Assign Exam to Selected Students
+                Назначить экзамен выбранным студентам
               </button>
             </div>
           )}
@@ -259,32 +259,32 @@ const TeacherDashboard = () => {
             <li>
               <Link to="#" onClick={() => setActiveView('profile')}>
                 <FaHome className="menu-icon" />
-                <span>Home / Profile</span>
+                <span>Профиль</span>
               </Link>
             </li>
             <li>
               <Link to="#" onClick={() => setActiveView('createExam')}>
                 <FaBook className="menu-icon" />
-                <span>Create Exam</span>
+                <span>Создать экзамен</span>
               </Link>
             </li>
             <li>
               <Link to="#" onClick={() => setActiveView('students')}>
                 <FaUsers className="menu-icon" />
-                <span>Students/Groups</span>
+                <span>Студенты/Группы</span>
               </Link>
             </li>
             <li>
               <Link to="/teacher-settings">
                 <FaCog className="menu-icon" />
-                <span>Settings</span>
+                <span>Настройки</span>
               </Link>
             </li>
           </ul>
         </nav>
         <div className="logout" onClick={handleLogout}>
           <FaSignOutAlt className="menu-icon" />
-          <span>Logout</span>
+          <span>Выйти</span>
         </div>
       </aside>
       <main className="dashboard-content">{renderContent()}</main>

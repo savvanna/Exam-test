@@ -1,173 +1,105 @@
-/* client/src/styles/CreateExam.css */
-
 * {
-    box-sizing: border-box;
-  }
-  
+  box-sizing: border-box;
+}
+
+.exam-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 20px 30px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: left; /* важно, чтобы текст был слева */
+}
+
+.exam-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.error {
+  color: #f44336;
+  background-color: #ffe6e6;
+  padding: 10px;
+  border-radius: 4px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.success {
+  color: #4caf50;
+  background-color: #e8f5e9;
+  padding: 10px;
+  border-radius: 4px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.exam-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.question-block {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.question-block p {
+  margin-bottom: 10px;
+}
+
+/* Новый вариант для выравнивания вариантов ответа */
+.answer-option {
+  margin-bottom: 8px;
+}
+
+.option-label {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* выравниваем по левому краю */
+}
+
+.option-radio {
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.option-text {
+  flex-grow: 1;
+  text-align: left;
+}
+
+/* Кнопки */
+.add-answer-btn,
+.add-question-btn,
+.submit-btn {
+  background-color: #4caf50;
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+  align-self: flex-start;
+}
+
+.add-answer-btn:hover,
+.add-question-btn:hover,
+.submit-btn:hover {
+  background-color: #43a047;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
   .exam-container {
-    max-width: 700px;
-    margin: 40px auto;
-    padding: 20px 30px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .exam-container h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-  }
-  
-  .error {
-    color: #f44336;
-    background-color: #ffe6e6;
-    padding: 10px;
-    border-radius: 4px;
-    text-align: center;
-    margin-bottom: 15px;
-  }
-  
-  .success {
-    color: #4caf50;
-    background-color: #e8f5e9;
-    padding: 10px;
-    border-radius: 4px;
-    text-align: center;
-    margin-bottom: 15px;
-  }
-  
-  .exam-form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .form-group {
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .form-group label {
-    margin-bottom: 5px;
-    font-weight: 600;
-    color: #555;
-  }
-  
-  .exam-form input,
-  .exam-form select {
-    width: 100%;
-    padding: 8px 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-    transition: border-color 0.3s ease;
-  }
-  
-  .exam-form input:focus,
-  .exam-form select:focus {
-    border-color: #4caf50;
-    outline: none;
-  }
-  
-  .question-block {
-    margin-bottom: 20px;
     padding: 15px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 6px;
+    margin: 20px;
   }
-  
-  .question-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  .question-header h4 {
-    margin: 0;
-    font-size: 18px;
-    color: #333;
-  }
-  
-  .remove-btn {
-    background-color: #f44336;
-    color: #fff;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .remove-btn:hover {
-    background-color: #d32f2f;
-  }
-  
-  .answers-section {
-    margin-top: 10px;
-  }
-  
-  /* Обновлённое оформление блоков вариантов ответа */
-  .answer-option {
-    display: flex;
-    align-items: center;
-    justify-content: space-between; /* Распределяем элементы по краям */
-    margin-bottom: 8px;
-  }
-  
-  .answer-radio-container {
-    flex: 0 0 auto; /* Не сжимается и не расширяется */
-    margin-right: 10px; /* Отступ между radio button и textbox */
-  }
-  
-  .answer-radio-container input[type="radio"] {
-    cursor: pointer;
-  }
-  
-  .answer-text {
-    flex: 1 1 auto; /* Занимает доступное пространство */
-    position: relative; /* Для позиционирования "заглушки" */
-  }
-  
-  .answer-text input[type="text"] {
-    width: 100%;
-    padding: 6px 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    box-sizing: border-box;
-    pointer-events: none; /* Делаем textbox некликабельным */
-    background-color: #eee; /* Визуально показываем, что он неактивен */
-    color: #777;
-  }
-  
-  .add-answer-btn,
-  .add-question-btn,
-  .submit-btn {
-    background-color: #4caf50;
-    color: #fff;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: background-color 0.3s ease;
-    align-self: flex-start;
-  }
-  
-  .add-answer-btn:hover,
-  .add-question-btn:hover,
-  .submit-btn:hover {
-    background-color: #43a047;
-  }
-  
-  /* Дополнительная адаптивность */
-  @media (max-width: 768px) {
-    .exam-container {
-      padding: 15px;
-      margin: 20px;
-    }
-  }
+}

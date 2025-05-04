@@ -66,40 +66,20 @@ router.post('/', authMiddleware, async (req, res) => {
 });
 
 // POST /exams/detailed - детальное создание экзамена с вопросами
+// POST /exams/detailed - детальное создание экзамена с вопросами
 router.post('/detailed', authMiddleware, async (req, res) => {
-  /*
-    Ожидаемый формат запроса (JSON):
-    {
-      "Title": "Название экзамена",
-      "Date": "2025-04-05",
-      "Questions": [
-         {
-            "Text": "Вопрос 1: Какой цвет у светофора?",
-            "Type": "multiple-choice",
-            "Answers": {
-                "A": "Красный",
-                "B": "Зелёный",
-                "C": "Жёлтый",
-                "D": "Синий"
-            },
-            "CorrectAnswer": "A"
-         },
-         ...
-      ]
-    }
-  */
   const { Title, Date, Questions } = req.body;
   if (!Title || !Date || !Array.isArray(Questions) || Questions.length === 0) {
     return res.status(400).json({ message: 'Title, Date and at least one question are required.' });
   }
 
-  const TeacherID = req.userId; // authMiddleware должен выставлять req.userId
+  const TeacherID = req.userId; // authMiddleware должен устанавливать req.userId
   const teacher = await Teacher.findByPk(TeacherID);
   if (!teacher) {
     return res.status(400).json({ message: 'Teacher not found.' });
   }
 
-  // Запускаем транзакцию для атомарности операции
+  // Транзакция для атомарности операции
   const transaction = await db.sequelize.transaction();
   try {
     const exam = await Exam.create({ Title, Date, TeacherID }, { transaction });
@@ -107,10 +87,12 @@ router.post('/detailed', authMiddleware, async (req, res) => {
     const createdQuestions = [];
     for (let i = 0; i < Questions.length; i++) {
       const q = Questions[i];
+      // Проверяем обязательные поля
       if (!q.Text || !q.Type || !q.Answers || !q.CorrectAnswer) {
         await transaction.rollback();
         return res.status(400).json({ message: `Question ${i + 1} is missing required fields.` });
       }
+      // Включаем поле Image, если оно есть. Если его нет, передаём null.
       const question = await Question.create(
         {
           ExamID: exam.ExamID,
@@ -118,6 +100,7 @@ router.post('/detailed', authMiddleware, async (req, res) => {
           Type: q.Type,
           Answers: q.Answers,
           CorrectAnswer: q.CorrectAnswer,
+          Image: q.Image || null,
         },
         { transaction }
       );
@@ -135,6 +118,7 @@ router.post('/detailed', authMiddleware, async (req, res) => {
     res.status(500).json({ message: 'Error creating detailed exam', error: error.message });
   }
 });
+
 
 // POST /exams/assign - назначение экзамена студентам
 router.post('/assign', authMiddleware, async (req, res) => {
