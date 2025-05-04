@@ -169,9 +169,12 @@ const StudentDashboard = ({ setAuth }) => {
                 </table>
               </div>
             )}
-            <button className="cancel-btn" onClick={() => setActiveView('profile')}>
-              Назад к профилю
-            </button>
+            <button 
+    className="back-to-profile-btn" 
+    onClick={() => navigate('/student-dashboard')}
+  >
+    Вернуться в кабинет
+  </button>
           </div>
         );
       case 'assignedExams':
@@ -217,9 +220,12 @@ const StudentDashboard = ({ setAuth }) => {
                 Вам не назначены экзамены. Проверьте позже или перейдите в раздел "Take Exam" для выбора экзамена.
               </p>
             )}
-            <button className="cancel-btn" onClick={() => setActiveView('profile')}>
-              Назад к профилю
-            </button>
+            <button 
+    className="back-to-profile-btn" 
+    onClick={() => navigate('/student-dashboard')}
+  >
+    Вернуться в кабинет
+  </button>
           </div>
         );
       case 'modules':
@@ -254,11 +260,11 @@ const StudentDashboard = ({ setAuth }) => {
       <aside className="sidebar">
         <div className="profile-info">
           <Link to="#" onClick={() => setActiveView('profile')}>
-            <FaUser size={40} />
+            <FaUser size={40} color="#007bff" />
           </Link>
           <div className="profile-text">
-            <Link to="#" onClick={() => setActiveView('profile')} className="user-link">
-              <span className="user-name">{studentName}</span>
+            <Link to="#" onClick={() => setActiveView('profile')} className="user-link" color="#007bff">
+              <span className="user-name" color="#007bff">{studentName}</span>
             </Link>
             <span className="user-role">
               ({role.charAt(0).toUpperCase() + role.slice(1)})
@@ -302,7 +308,7 @@ const StudentDashboard = ({ setAuth }) => {
           </ul>
         </nav>
         <div className="logout" onClick={handleLogout}>
-          <FaSignOutAlt className="menu-icon" />
+          <FaSignOutAlt className="menu-icon" color="#fff" />
           <span>Выйти</span>
         </div>
       </aside>

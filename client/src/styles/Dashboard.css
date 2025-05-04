@@ -6,16 +6,22 @@
   font-family: 'Arial', sans-serif;
 }
 
-/* Боковая панель */
+/* Боковая панель – всегда фиксированная высота, не растягивается */
 .sidebar {
+  position: fixed;         /* фиксируем меню относительно окна */
+  top: 0;
+  left: 0;
   width: 250px;
+  height: 100vh;           /* всегда на всю высоту вьюпорта */
   background-color: #2c3e50;
   padding: 20px;
   color: #fff;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;        /* если контента много, появляется скролл */
 }
 
+/* Блок с информацией о профиле */
 .sidebar .profile-info {
   display: flex;
   align-items: center;
@@ -29,6 +35,7 @@
 .sidebar .profile-info .user-name {
   font-size: 20px;
   font-weight: bold;
+  color: #007bff;  /* синий оттенок для имени */
 }
 
 .sidebar .profile-info .user-role {
@@ -64,20 +71,36 @@
   margin-right: 10px;
 }
 
-/* Кнопка выхода */
+/* Кнопка выхода – всегда размещается внизу */
 .logout {
-  margin-top: auto; /* кнопка внизу */
-  cursor: pointer;
+  margin-top: auto;  /* отодвигает кнопку вниз */
   display: flex;
   align-items: center;
+  justify-content: center;
   font-size: 16px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .logout:hover {
-  color: #bdc3c7;
+  background-color: #218838;
 }
+
+/* Основной контент (отступ слева равен ширине сайдбара) */
+.dashboard-content {
+  margin-left: 250px;
+  padding: 40px;
+  background-color: #ecf0f1;
+  min-height: 100vh;
+}
+
+
+
+
 
 /* Основной контент */
 .dashboard-content {
@@ -128,3 +151,26 @@
   margin-right: 10px;
 }
 
+.user-link,
+.user-link:visited,
+.user-link:hover,
+.user-link:active {
+  text-decoration: none !important; /* Убираем подчёркивание */
+  color: #007bff !important;         /* Обеспечиваем синий цвет */
+}
+/* Кнопка "Вернуться в кабинет" с зелёным оформлением */
+.back-to-profile-btn {
+  background-color: #28a745;         /* зеленый фон */
+  color: #fff;                       /* белый текст */
+  padding: 10px 16px;                /* отступы */
+  border: none;                      /* без рамки */
+  border-radius: 4px;                /* округлённые углы */
+  font-size: 16px;                   /* размер шрифта */
+  text-transform: uppercase;         /* все буквы заглавные */
+  cursor: pointer;                   /* курсор pointer */
+  transition: background-color 0.3s ease, transform 0.2s ease;  /* плавное изменение */
+}
+.back-to-profile-btn:hover {
+  background-color: #218838;         /* чуть темнее при наведении */
+  transform: translateY(-2px);       /* легкий сдвиг вверх при наведении */
+}

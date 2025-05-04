@@ -1,84 +1,100 @@
-/* client/src/styles/ModuleTests.css */
+* {
+  box-sizing: border-box;
+}
 
 .modules-container {
-    background-color: #fff;
-    min-height: 100vh;
-    padding: 40px;
-    font-family: Arial, sans-serif;
-    color: #333;
-  }
-  
-  .modules-container h1 {
-    text-align: center;
-    margin-bottom: 30px;
-  }
-  
-  .modules-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-  }
-  
-  .module-card {
-    background-color: #fafafa;
-    border: 1px solid #ddd;
-    padding: 20px;
-    border-radius: 8px;
-    width: 300px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  
-  .module-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-  
-  .module-card img {
-    width: 100%;
-    height: auto;
-    border-radius: 5px;
-    margin-bottom: 15px;
-  }
-  
-  .module-card h3 {
-    margin: 10px 0;
-    font-size: 20px;
-    color: #007bff;
-  }
-  
-  .module-card p {
-    margin: 5px 0 15px 0;
-    font-size: 16px;
-  }
-  
-  .submit-btn, .cancel-btn {
-    display: inline-block;
-    padding: 10px 16px;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    text-transform: uppercase;
-  }
-  
-  .submit-btn {
-    background-color: #007bff;
-    color: #fff;
-  }
-  
-  .submit-btn:hover {
-    background-color: #0056b3;
-  }
-  
-  .cancel-btn {
-    background-color: #dc3545;
-    color: #fff;
-  }
-  
-  .cancel-btn:hover {
-    background-color: #c82333;
-  }
-  
+  background-color: #fff;
+  min-height: 100vh;
+  padding: 40px;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+/* Шапка страницы модулей */
+.modules-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.modules-header h1 {
+  margin: 0;
+  font-size: 28px;
+  color: #007bff; /* Синий оттенок для заголовка */
+}
+
+/* Кнопка "Вернуться в кабинет" */
+.back-to-profile-btn {
+  background-color: #28a745;
+  color: #fff;
+  border: 2px solid #218838;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  text-transform: uppercase;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+.back-to-profile-btn:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+}
+
+/* Расположение модулей в два ряда по три */
+.modules-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  justify-items: center;
+}
+
+.module-card {
+  background-color: #fafafa;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.module-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.module-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.module-card h3 {
+  margin: 10px 0;
+  font-size: 20px;
+  color: #007bff;
+}
+
+.module-card p {
+  margin: 5px 0 15px 0;
+  font-size: 16px;
+}
+
+.submit-btn {
+  display: inline-block;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  text-transform: uppercase;
+  background-color: #28a745;
+  color: #fff;
+  transition: background-color 0.2s ease;
+}
+
+.submit-btn:hover {
+  background-color: #218838;
+}

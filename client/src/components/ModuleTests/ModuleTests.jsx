@@ -1,9 +1,8 @@
-// client/src/components/ModuleTests/ModuleTests.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/ModuleTests.css';
 
-// Импорт картинок для модулей
+// Импорт изображений для модулей
 import coreImg from '../../assets/images/core.jpg';
 import behaviourImg from '../../assets/images/behaviour.jpg';
 import parkingImg from '../../assets/images/parking.jpg';
@@ -25,8 +24,16 @@ const ModuleTests = () => {
   ];
 
   return (
-    <div className="modules-list-container">
-      <h2>Модуль-тесты</h2>
+    <div className="modules-container">
+      <header className="modules-header">
+        <h1>Модуль-тесты</h1>
+        <button 
+          className="back-to-profile-btn" 
+          onClick={() => navigate('/student-dashboard')}
+        >
+          Вернуться в кабинет
+        </button>
+      </header>
       <div className="modules-list">
         {modules.map(mod => (
           <div key={mod.id} className="module-card">
