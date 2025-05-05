@@ -27,12 +27,6 @@ const ModuleTests = () => {
     <div className="modules-container">
       <header className="modules-header">
         <h1>Модуль-тесты</h1>
-        <button 
-          className="back-to-profile-btn" 
-          onClick={() => navigate('/student-dashboard')}
-        >
-          Вернуться в кабинет
-        </button>
       </header>
       <div className="modules-list">
         {modules.map(mod => (

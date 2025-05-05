@@ -41,7 +41,13 @@ const StudentDashboard = ({ setAuth }) => {
   // Функция форматирования даты
   const formatDate = (dateStr) => {
     const d = new Date(dateStr);
-    return isNaN(d.getTime()) ? 'N/A' : d.toLocaleDateString();
+    return isNaN(d.getTime())
+      ? 'N/A'
+      : d.toLocaleDateString('ru-RU', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        });
   };
 
   // Логаут
