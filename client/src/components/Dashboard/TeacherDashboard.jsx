@@ -52,6 +52,7 @@ const TeacherDashboard = ({ setAuth }) => {
 
   // При переключении на view "students" загружаем список студентов и доступных экзаменов
   useEffect(() => {
+    
     if (activeView === 'students') {
       const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
       const token = localStorage.getItem('token');
@@ -71,6 +72,7 @@ const TeacherDashboard = ({ setAuth }) => {
         } finally {
           setStudentsLoading(false);
         }
+        
       };
 
       // Функция для загрузки доступных экзаменов
@@ -169,7 +171,7 @@ const TeacherDashboard = ({ setAuth }) => {
     if (activeView === 'students') {
       return (
         <div className="students-section">
-          <h2>Сиуденты/группы</h2>
+          <h2>Студенты/группы</h2>
           {/* Блок выбора экзамена для назначения */}
           <div className="assignment-section">
             <label htmlFor="examSelect">Выберите экзамен для назначения:</label>
@@ -243,11 +245,11 @@ const TeacherDashboard = ({ setAuth }) => {
       <aside className="sidebar">
         <div className="profile-info">
           <Link to="#" onClick={() => setActiveView('profile')}>
-            <FaUser size={40} />
+            <FaUser size={40} color="#007bff" />
           </Link>
           <div className="profile-text">
-            <Link to="#" onClick={() => setActiveView('profile')} className="user-link">
-              <span className="user-name">{teacherName}</span>
+            <Link to="#" onClick={() => setActiveView('profile')} className="user-link" color="#007bff">
+              <span className="user-name" color="#007bff">  {teacherName}</span>
             </Link>
             <span className="user-role">
               ({role.charAt(0).toUpperCase() + role.slice(1)})

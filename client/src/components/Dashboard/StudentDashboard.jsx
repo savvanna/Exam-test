@@ -10,7 +10,7 @@ import {
   FaBook
 } from 'react-icons/fa';
 import axios from 'axios';
-import ModuleTests from '../ModuleTests/ModuleTests'; // Убедитесь, что этот путь корректный
+import ModuleTests from '../ModuleTests/ModuleTests';
 import '../../styles/Dashboard.css';
 import '../../styles/CreateExam.css';
 
@@ -19,7 +19,6 @@ const StudentDashboard = ({ setAuth }) => {
 
   // activeView: 'profile', 'allExams', 'assignedExams', 'modules', 'result'
   const [activeView, setActiveView] = useState('profile');
-
   const [exams, setExams] = useState([]);
   const [allExamLoading, setAllExamLoading] = useState(false);
   const [allExamError, setAllExamError] = useState('');
@@ -28,7 +27,6 @@ const StudentDashboard = ({ setAuth }) => {
   const [assignmentsLoading, setAssignmentsLoading] = useState(false);
   const [assignmentsError, setAssignmentsError] = useState('');
 
-  // Если используется результат экзамена (пока не применён)
   // eslint-disable-next-line no-unused-vars
   const [result, setResult] = useState(null);
 
@@ -40,17 +38,19 @@ const StudentDashboard = ({ setAuth }) => {
   const role = localStorage.getItem('role') || 'student';
   const studentID = localStorage.getItem('studentID') || null;
 
-  const navigateWithView = (view) => {
-    setActiveView(view);
-  };
-
-  // Вспомогательная функция для форматирования даты
+  // Функция форматирования даты
   const formatDate = (dateStr) => {
     const d = new Date(dateStr);
-    return isNaN(d.getTime()) ? 'N/A' : d.toLocaleDateString();
+    return isNaN(d.getTime())
+      ? 'N/A'
+      : d.toLocaleDateString('ru-RU', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric'
+        });
   };
 
-  // Функция logout: очищает localStorage, обновляет auth и переходит на главную страницу
+  // Логаут
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
@@ -63,7 +63,7 @@ const StudentDashboard = ({ setAuth }) => {
     navigate('/');
   };
 
-  // Загрузка всех экзаменов при выборе "allExams"
+  // Загрузка всех экзаменов для вкладки "allExams"
   useEffect(() => {
     if (activeView === 'allExams') {
       const fetchExams = async () => {
@@ -87,7 +87,7 @@ const StudentDashboard = ({ setAuth }) => {
     }
   }, [activeView]);
 
-  // Загрузка назначенных экзаменов при выборе "assignedExams"
+  // Загрузка назначенных экзаменов для вкладки "assignedExams"
   useEffect(() => {
     if (activeView === 'assignedExams' && studentID) {
       const fetchAssignments = async () => {
@@ -98,6 +98,7 @@ const StudentDashboard = ({ setAuth }) => {
           const response = await axios.get(`${baseURL}/assignments?studentId=${studentID}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
+          console.log('Assigned exams:', response.data); // Отладочный вывод
           setPendingAssignments(response.data);
           setAssignmentsError('');
         } catch (error) {
@@ -116,21 +117,58 @@ const StudentDashboard = ({ setAuth }) => {
     navigate(`/take-exam?examId=${examId}`);
   };
 
-  // Рендеринг содержимого правой части в зависимости от activeView
+  // Рендеринг контента в зависимости от activeView
   const renderContent = () => {
     switch (activeView) {
       case 'profile':
         return (
-          <div>
-            <h2>Кабинет Студента</h2>
-            <p>
-              Добро пожаловать, {studentName}!
-            </p>
-            <ul>
-              <li><strong>Email:</strong> {studentEmail}</li>
-              <li><strong>Дата регистрации</strong> {registrationDate}</li>
-              <li><strong>Номер группы</strong> {groupName}</li>
-            </ul>
+          <div className="profile-content">
+            <div className="personal-details">
+              <h2>Личная информация</h2>
+              <div className="personal-card">
+                <p><strong>Имя:</strong> {studentName}</p>
+                <p><strong>Email:</strong> {studentEmail}</p>
+                <p><strong>Дата регистрации:</strong> {registrationDate}</p>
+                <p><strong>Группа:</strong> {groupName}</p>
+              </div>
+            </div>
+            <div className="assigned-exams-demo">
+              <h2>Назначенные экзамены</h2>
+              {pendingAssignments.length > 0 ? (
+                pendingAssignments.map((assignment) => (
+                  <div key={assignment.assignmentId || `assignment-${assignment.examId || assignment.ExamID}`} className="exam-card">
+                    <h3>{assignment.examTitle || assignment.Title}</h3>
+                    <p><strong>Дата:</strong> {formatDate(assignment.assignedDate)}</p>
+                    <p><strong>Преподаватель:</strong> {assignment.teacherName || 'N/A'}</p>
+                  </div>
+                ))
+              ) : (
+                <p>На данный момент экзамены не назначены.</p>
+              )}
+            </div>
+            <div className="student-activity">
+              <h2>Активность студента</h2>
+              <div className="activity-cards">
+                <div className="activity-card">
+                  <div className="progress-circle">
+                    <span className="progress-text">70%</span>
+                  </div>
+                  <p>Успеваемость</p>
+                </div>
+                <div className="activity-card">
+                  <div className="progress-circle">
+                    <span className="progress-text">85%</span>
+                  </div>
+                  <p>Посещаемость</p>
+                </div>
+                <div className="activity-card">
+                  <div className="progress-circle">
+                    <span className="progress-text">60%</span>
+                  </div>
+                  <p>Активность в классах</p>
+                </div>
+              </div>
+            </div>
           </div>
         );
       case 'allExams':
@@ -148,7 +186,7 @@ const StudentDashboard = ({ setAuth }) => {
                 <table className="assignments-table">
                   <thead>
                     <tr>
-                    <th>Название экзамена</th>
+                      <th>Название экзамена</th>
                       <th>Дата проведения</th>
                       <th>Прохождение</th>
                     </tr>
@@ -169,8 +207,8 @@ const StudentDashboard = ({ setAuth }) => {
                 </table>
               </div>
             )}
-            <button className="cancel-btn" onClick={() => setActiveView('profile')}>
-              Назад к профилю
+            <button className="back-to-profile-btn" onClick={() => setActiveView('profile')}>
+              Вернуться к профилю
             </button>
           </div>
         );
@@ -213,18 +251,15 @@ const StudentDashboard = ({ setAuth }) => {
                 </table>
               </div>
             ) : (
-              <p>
-                Вам не назначены экзамены. Проверьте позже или перейдите в раздел "Take Exam" для выбора экзамена.
-              </p>
+              <p>Вам не назначены экзамены. Проверьте позже или перейдите в раздел "Take Exam" для выбора экзамена.</p>
             )}
-            <button className="cancel-btn" onClick={() => setActiveView('profile')}>
-              Назад к профилю
+            <button className="back-to-profile-btn" onClick={() => setActiveView('profile')}>
+              Вернуться к профилю
             </button>
           </div>
         );
       case 'modules':
         return (
-          // Отображение страницы модуль-тестов
           <div className="modules-container" style={{ backgroundColor: '#fff', padding: '20px', minHeight: '100vh' }}>
             <ModuleTests />
           </div>
@@ -248,13 +283,13 @@ const StudentDashboard = ({ setAuth }) => {
         return null;
     }
   };
-
+  
   return (
     <div className="dashboard-container">
       <aside className="sidebar">
         <div className="profile-info">
           <Link to="#" onClick={() => setActiveView('profile')}>
-            <FaUser size={40} />
+            <FaUser size={40} color="#007bff" />
           </Link>
           <div className="profile-text">
             <Link to="#" onClick={() => setActiveView('profile')} className="user-link">
@@ -283,7 +318,8 @@ const StudentDashboard = ({ setAuth }) => {
               <Link to="#" onClick={() => setActiveView('assignedExams')}>
                 <FaClipboardList className="menu-icon" />
                 <span>
-                  Назначенный экзамен {pendingAssignments.length > 0 && (<span className="badge">({pendingAssignments.length})</span>)}
+                  Назначенный экзамен
+                  {pendingAssignments.length > 0 && (<span className="badge">({pendingAssignments.length})</span>)}
                 </span>
               </Link>
             </li>
@@ -302,7 +338,7 @@ const StudentDashboard = ({ setAuth }) => {
           </ul>
         </nav>
         <div className="logout" onClick={handleLogout}>
-          <FaSignOutAlt className="menu-icon" />
+          <FaSignOutAlt className="menu-icon" color="#fff" />
           <span>Выйти</span>
         </div>
       </aside>

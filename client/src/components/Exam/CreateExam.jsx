@@ -253,6 +253,7 @@ const CreateExam = () => {
                   />
                   <input
                     type="text"
+                    className="option-text"
                     value={ans}
                     placeholder={`Вариант ответа ${aIndex + 1}`}
                     onChange={(e) =>

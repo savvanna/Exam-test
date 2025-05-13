@@ -6,16 +6,22 @@
   font-family: 'Arial', sans-serif;
 }
 
-/* Боковая панель */
+/* Боковая панель – всегда фиксированная высота, не растягивается */
 .sidebar {
+  position: fixed;         /* фиксируем меню относительно окна */
+  top: 0;
+  left: 0;
   width: 250px;
+  height: 100vh;           /* всегда на всю высоту вьюпорта */
   background-color: #2c3e50;
   padding: 20px;
   color: #fff;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;        /* если контента много, появляется скролл */
 }
 
+/* Блок с информацией о профиле */
 .sidebar .profile-info {
   display: flex;
   align-items: center;
@@ -29,6 +35,7 @@
 .sidebar .profile-info .user-name {
   font-size: 20px;
   font-weight: bold;
+  color: #007bff;  /* синий оттенок для имени */
 }
 
 .sidebar .profile-info .user-role {
@@ -64,20 +71,36 @@
   margin-right: 10px;
 }
 
-/* Кнопка выхода */
+/* Кнопка выхода – всегда размещается внизу */
 .logout {
-  margin-top: auto; /* кнопка внизу */
-  cursor: pointer;
+  margin-top: auto;  /* отодвигает кнопку вниз */
   display: flex;
   align-items: center;
+  justify-content: center;
   font-size: 16px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .logout:hover {
-  color: #bdc3c7;
+  background-color: #218838;
 }
+
+/* Основной контент (отступ слева равен ширине сайдбара) */
+.dashboard-content {
+  margin-left: 250px;
+  padding: 40px;
+  background-color: #ecf0f1;
+  min-height: 100vh;
+}
+
+
+
+
 
 /* Основной контент */
 .dashboard-content {
@@ -128,3 +151,132 @@
   margin-right: 10px;
 }
 
+.user-link,
+.user-link:visited,
+.user-link:hover,
+.user-link:active {
+  text-decoration: none !important; /* Убираем подчёркивание */
+  color: #007bff !important;         /* Обеспечиваем синий цвет */
+}
+/* Кнопка "Вернуться в кабинет" с зелёным оформлением */
+.back-to-profile-btn {
+  background-color: #28a745;         /* зеленый фон */
+  color: #fff;                       /* белый текст */
+  padding: 10px 16px;                /* отступы */
+  border: none;                      /* без рамки */
+  border-radius: 4px;                /* округлённые углы */
+  font-size: 16px;                   /* размер шрифта */
+  text-transform: uppercase;         /* все буквы заглавные */
+  cursor: pointer;                   /* курсор pointer */
+  transition: background-color 0.3s ease, transform 0.2s ease;  /* плавное изменение */
+}
+.back-to-profile-btn:hover {
+  background-color: #218838;         /* чуть темнее при наведении */
+  transform: translateY(-2px);       /* легкий сдвиг вверх при наведении */
+}
+
+/* Стили для блока личной информации */
+.profile-content {
+  padding: 20px;
+}
+
+.personal-details {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.personal-details h2 {
+  color: #007bff;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.personal-card p {
+  margin: 8px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+/* Стили для демонстрации назначенных экзаменов */
+.assigned-exams-demo {
+  background-color: #fff;
+  padding: 20px;
+  margin-bottom: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.assigned-exams-demo h2 {
+  color: #007bff;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.exam-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #fafafa;
+  margin-bottom: 15px;
+}
+
+.exam-card h3 {
+  margin-top: 0;
+  color: #28a745;
+}
+
+.exam-card p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Стили для блока активности студента */
+.student-activity {
+  background-color: #f5faff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.student-activity h2 {
+  text-align: center;
+  color: #007bff;
+  margin-bottom: 20px;
+}
+
+.activity-cards {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.activity-card {
+  flex: 1;
+  min-width: 120px;
+  max-width: 150px;
+  text-align: center;
+}
+
+.progress-circle {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 10px;
+  border-radius: 50%;
+  /* Пример динамического заполнения: 70% зелёного, 30% серого */
+  background: conic-gradient(#28a745 0%, #28a745 70%, #ddd 70%, #ddd 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-text {
+  font-size: 18px;
+  font-weight: bold;
+  color: #007bff;
+}

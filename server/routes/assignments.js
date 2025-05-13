@@ -1,4 +1,3 @@
-// server/routes/assignments.js
 const express = require('express');
 const router = express.Router();
 const db = require('../models');
@@ -10,11 +9,12 @@ router.get('/', async (req, res) => {
     return res.status(400).json({ message: 'Student ID is required' });
   }
   try {
+    console.log('Received studentId:', studentId);
     const student = await db.Student.findByPk(studentId);
+    console.log('Student record:', student);
     if (!student || !student.assignedExams || student.assignedExams.length === 0) {
       return res.json([]);
     }
-    // Получаем экзамены, назначенные студенту, по списку ID
     const exams = await db.Exam.findAll({
       where: {
         ExamID: student.assignedExams,
