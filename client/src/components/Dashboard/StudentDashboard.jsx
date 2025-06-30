@@ -13,11 +13,12 @@ import axios from 'axios';
 import ModuleTests from '../ModuleTests/ModuleTests';
 import '../../styles/Dashboard.css';
 import '../../styles/CreateExam.css';
+import ExamResults from '../Exam/ExamResults';
 
 const StudentDashboard = ({ setAuth }) => {
   const navigate = useNavigate();
 
-  // activeView: 'profile', 'allExams', 'assignedExams', 'modules', 'result'
+  // activeView: 'profile', 'allExams', 'assignedExams', 'modules', 'results', 'result'
   const [activeView, setActiveView] = useState('profile');
   const [exams, setExams] = useState([]);
   const [allExamLoading, setAllExamLoading] = useState(false);
@@ -26,6 +27,11 @@ const StudentDashboard = ({ setAuth }) => {
   const [pendingAssignments, setPendingAssignments] = useState([]);
   const [assignmentsLoading, setAssignmentsLoading] = useState(false);
   const [assignmentsError, setAssignmentsError] = useState('');
+
+  // Состояния для результатов экзаменов (для студента)
+  const [results, setResults] = useState([]);
+  const [resultsLoading, setResultsLoading] = useState(false);
+  const [resultsError, setResultsError] = useState('');
 
   // eslint-disable-next-line no-unused-vars
   const [result, setResult] = useState(null);
@@ -38,16 +44,12 @@ const StudentDashboard = ({ setAuth }) => {
   const role = localStorage.getItem('role') || 'student';
   const studentID = localStorage.getItem('studentID') || null;
 
-  // Функция форматирования даты
+  // Функция форматирования даты (формат "dd.mm.yyyy")
   const formatDate = (dateStr) => {
     const d = new Date(dateStr);
     return isNaN(d.getTime())
       ? 'N/A'
-      : d.toLocaleDateString('ru-RU', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric'
-        });
+      : d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
   };
 
   // Логаут
@@ -63,7 +65,7 @@ const StudentDashboard = ({ setAuth }) => {
     navigate('/');
   };
 
-  // Загрузка всех экзаменов для вкладки "allExams"
+  // Загрузка всех экзаменов для view "allExams"
   useEffect(() => {
     if (activeView === 'allExams') {
       const fetchExams = async () => {
@@ -87,7 +89,7 @@ const StudentDashboard = ({ setAuth }) => {
     }
   }, [activeView]);
 
-  // Загрузка назначенных экзаменов для вкладки "assignedExams"
+  // Загрузка назначенных экзаменов для view "assignedExams"
   useEffect(() => {
     if (activeView === 'assignedExams' && studentID) {
       const fetchAssignments = async () => {
@@ -98,7 +100,7 @@ const StudentDashboard = ({ setAuth }) => {
           const response = await axios.get(`${baseURL}/assignments?studentId=${studentID}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
-          console.log('Assigned exams:', response.data); // Отладочный вывод
+          console.log('Assigned exams:', response.data);
           setPendingAssignments(response.data);
           setAssignmentsError('');
         } catch (error) {
@@ -112,12 +114,37 @@ const StudentDashboard = ({ setAuth }) => {
     }
   }, [activeView, studentID]);
 
+  // Загрузка результатов экзаменов для view "results" (для студента)
+  useEffect(() => {
+    if (activeView === 'results' && studentID) {
+      const fetchResults = async () => {
+        setResultsLoading(true);
+        try {
+          const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+          const token = localStorage.getItem('token');
+          // GET-запрос: /results?studentId=<studentID>
+          const response = await axios.get(`${baseURL}/results?studentId=${studentID}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setResults(response.data);
+          setResultsError('');
+        } catch (error) {
+          console.error('Ошибка загрузки результатов:', error);
+          setResultsError('Ошибка загрузки результатов экзаменов.');
+        } finally {
+          setResultsLoading(false);
+        }
+      };
+      fetchResults();
+    }
+  }, [activeView, studentID]);
+
   // Переход к прохождению экзамена
   const handleTakeExam = (examId) => {
     navigate(`/take-exam?examId=${examId}`);
   };
 
-  // Рендеринг контента в зависимости от activeView
+  // Рендеринг содержимого в зависимости от activeView
   const renderContent = () => {
     switch (activeView) {
       case 'profile':
@@ -128,7 +155,7 @@ const StudentDashboard = ({ setAuth }) => {
               <div className="personal-card">
                 <p><strong>Имя:</strong> {studentName}</p>
                 <p><strong>Email:</strong> {studentEmail}</p>
-                <p><strong>Дата регистрации:</strong> {registrationDate}</p>
+                <p><strong>Дата регистрации:</strong> {formatDate(registrationDate)}</p>
                 <p><strong>Группа:</strong> {groupName}</p>
               </div>
             </div>
@@ -236,12 +263,7 @@ const StudentDashboard = ({ setAuth }) => {
                         <td>{assignment.examTitle || assignment.Title}</td>
                         <td>{formatDate(assignment.assignedDate)}</td>
                         <td>
-                          <button
-                            className="submit-btn"
-                            onClick={() =>
-                              handleTakeExam(assignment.examId || assignment.ExamID)
-                            }
-                          >
+                          <button className="submit-btn" onClick={() => handleTakeExam(assignment.examId || assignment.ExamID)}>
                             Пройти экзамен
                           </button>
                         </td>
@@ -251,13 +273,24 @@ const StudentDashboard = ({ setAuth }) => {
                 </table>
               </div>
             ) : (
-              <p>Вам не назначены экзамены. Проверьте позже или перейдите в раздел "Take Exam" для выбора экзамена.</p>
+              <p>Вам не назначены экзамены. Проверьте позже или перейдите в раздел "Пройти экзамен".</p>
             )}
             <button className="back-to-profile-btn" onClick={() => setActiveView('profile')}>
               Вернуться к профилю
             </button>
           </div>
         );
+      // … внутри StudentDashboard.jsx, функция renderContent()
+case 'results':
+  return (
+    <div className="results-section">
+      <ExamResults results={results} role={role} />
+      <button className="back-to-profile-btn" onClick={() => setActiveView('profile')}>
+        Вернуться к профилю
+      </button>
+    </div>
+  );
+
       case 'modules':
         return (
           <div className="modules-container" style={{ backgroundColor: '#fff', padding: '20px', minHeight: '100vh' }}>
@@ -283,7 +316,7 @@ const StudentDashboard = ({ setAuth }) => {
         return null;
     }
   };
-  
+
   return (
     <div className="dashboard-container">
       <aside className="sidebar">
@@ -295,9 +328,7 @@ const StudentDashboard = ({ setAuth }) => {
             <Link to="#" onClick={() => setActiveView('profile')} className="user-link">
               <span className="user-name">{studentName}</span>
             </Link>
-            <span className="user-role">
-              ({role.charAt(0).toUpperCase() + role.slice(1)})
-            </span>
+            <span className="user-role">({role.charAt(0).toUpperCase() + role.slice(1)})</span>
           </div>
         </div>
         <nav className="sidebar-menu">
@@ -318,9 +349,14 @@ const StudentDashboard = ({ setAuth }) => {
               <Link to="#" onClick={() => setActiveView('assignedExams')}>
                 <FaClipboardList className="menu-icon" />
                 <span>
-                  Назначенный экзамен
-                  {pendingAssignments.length > 0 && (<span className="badge">({pendingAssignments.length})</span>)}
+                  Назначенный экзамен {pendingAssignments.length > 0 && (<span className="badge">({pendingAssignments.length})</span>)}
                 </span>
+              </Link>
+            </li>
+            <li>
+              <Link to="#" onClick={() => setActiveView('results')}>
+                <FaBook className="menu-icon" />
+                <span>Результаты экзаменов</span>
               </Link>
             </li>
             <li>

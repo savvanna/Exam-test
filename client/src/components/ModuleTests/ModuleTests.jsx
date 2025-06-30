@@ -9,6 +9,7 @@ import parkingImg from '../../assets/images/parking.jpg';
 import emergenciesImg from '../../assets/images/emergencies.jpg';
 import roadPosImg from '../../assets/images/road_position.jpg';
 import intersectionImg from '../../assets/images/intersection.jpg';
+import drivingImg from '../../assets/images/driving.JPG';
 
 const ModuleTests = () => {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ const ModuleTests = () => {
     { id: 4, title: "Экстренные ситуации", duration: 6, img: emergenciesImg, path: '/module-tests/emergencies' },
     { id: 5, title: "Позиции на дороге", duration: 5, img: roadPosImg, path: '/module-tests/roadrules' },
     { id: 6, title: "Перекрёстки", duration: 13, img: intersectionImg, path: '/module-tests/intersection' },
+    { id: 7, title: "Дорога", duration: 13, img: drivingImg, path: '/module-tests/driving' },
   ];
 
   return (

@@ -7,12 +7,10 @@ import '../../styles/CreateExam.css';
 const TakeExam = () => {
   const location = useLocation();
   const navigate = useNavigate();
-
-  // Извлекаем examId из query-параметров, например: /take-exam?examId=123
   const examId = new URLSearchParams(location.search).get('examId');
 
   const [exam, setExam] = useState(null);
-  const [answers, setAnswers] = useState({}); // {questionIndex: selectedOptionLetter}
+  const [answers, setAnswers] = useState({}); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [result, setResult] = useState(null);
@@ -22,7 +20,6 @@ const TakeExam = () => {
       try {
         const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
         const token = localStorage.getItem('token');
-        // Получаем детальную информацию об экзамене по его id
         const response = await axios.get(`${baseURL}/exams/${examId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -45,19 +42,47 @@ const TakeExam = () => {
 
   const handleAnswerChange = (questionIdx, option) => {
     setAnswers((prev) => ({ ...prev, [questionIdx]: option }));
+    console.log(`Ответ на вопрос ${questionIdx + 1} выбран: ${option}`);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let correctCount = 0;
-    // Обрабатываем оба варианта именования поля с вопросами: Questions или questions
     const questions = exam?.Questions || exam?.questions || [];
+    
     questions.forEach((q, idx) => {
-      if (answers[idx] === q.CorrectAnswer) {
+      // Приводим выбранный ответ и правильный ответ к строке, обрезаем пробелы и переводим в верхний регистр
+      const userAnswer = (answers[idx] || '').toString().trim().toUpperCase();
+      const correctAnswer = (q.CorrectAnswer || '').toString().trim().toUpperCase();
+
+      console.log(`Вопрос ${idx + 1}: выбранный ответ: "${userAnswer}" | ожидаемый: "${correctAnswer}"`);
+
+      if (userAnswer === correctAnswer) {
         correctCount++;
       }
     });
+    
+    console.log(`Подсчитано ${correctCount} правильных ответов из ${questions.length}`);
     setResult({ score: correctCount, total: questions.length });
+
+    // Отправляем результат на сервер
+    try {
+      const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+      const payload = {
+        StudentID: localStorage.getItem('studentID'),
+        ExamID: exam.ExamID,
+        Score: correctCount,
+        Total: questions.length,
+        DateTaken: new Date(),
+      };
+      const response = await axios.post(`${baseURL}/results`, payload, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      console.log('Result created:', response.data);
+    } catch (error) {
+      console.error('Error saving result:', error);
+    }
   };
 
   if (loading) {
@@ -76,7 +101,6 @@ const TakeExam = () => {
     );
   }
 
-  // Используем вопросы из экзамена (поддерживая оба варианта именования)
   const questions = exam?.Questions || exam?.questions || [];
   console.log("Exam Questions:", questions);
 
@@ -97,7 +121,7 @@ const TakeExam = () => {
             className="submit-btn"
             onClick={() => navigate('/student-dashboard')}
           >
-            Вернуться в профиль
+            Вернуться к профилю
           </button>
         </div>
       ) : (
@@ -111,13 +135,12 @@ const TakeExam = () => {
                 <label>Текст вопроса:</label>
                 <p>{q.Text}</p>
               </div>
-              {/* Если преподаватель загрузил изображение для вопроса, отображаем его */}
               {(q.Image || q.image) && (
                 <div className="question-image">
                   <img
                     src={q.Image || q.image}
                     alt={`Изображение для вопроса ${idx + 1}`}
-                    style={{ maxWidth: '400px', display: 'block', margin: '10px auto' }}
+                    style={{ maxWidth: '400px', display: 'block', margin: '10px auto', borderRadius: '4px' }}
                   />
                 </div>
               )}

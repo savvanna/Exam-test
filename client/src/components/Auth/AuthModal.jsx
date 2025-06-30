@@ -15,7 +15,7 @@ const AuthModal = ({ setAuth }) => {
   // Поля для регистрации
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
-  const [regName, setRegName] = useState('');    // TeacherName или StudentName
+  const [regName, setRegName] = useState('');    // Имя преподавателя или студента
   const [regGroup, setRegGroup] = useState('');  // опционально для студентов
 
   const [error, setError] = useState('');
@@ -44,7 +44,7 @@ const AuthModal = ({ setAuth }) => {
 
       const { token } = response.data;
       if (token) {
-        // Обновляем auth-стейт
+        // Обновляем состояние авторизации
         setAuth({ token, role: response.data.role });
 
         if (role === 'teacher') {
@@ -60,18 +60,17 @@ const AuthModal = ({ setAuth }) => {
           localStorage.setItem('registrationDate', RegistrationDate);
           localStorage.setItem('groupName', groupName);
           localStorage.setItem('studentID', studentID);
-          console.log("Student token saved:", StudentName, groupName, studentID);
           navigate('/student-dashboard');
         }
       } else {
-        setError('Login failed: Invalid credentials');
+        setError('Ошибка входа: неверные данные');
       }
     } catch (err) {
-      setError('Login error: ' + JSON.stringify(err));
+      setError('Ошибка входа: ' + JSON.stringify(err));
     }
   };
 
-  // Обработчик регистрации + авто логин
+  // Обработчик регистрации + авто вход
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -85,7 +84,7 @@ const AuthModal = ({ setAuth }) => {
 
       console.log("Register data:", registerData);
       await axios.post(`${baseURL}${registerRoute}`, registerData);
-      alert('Registration successful! Logging you in...');
+      alert('Регистрация успешна! Выполняется вход...');
       const loginRoute = role === 'teacher' ? '/auth/teacher/login' : '/auth/student/login';
       const response = await axios.post(`${baseURL}${loginRoute}`, { Email: regEmail, Password: regPassword });
       const { token, role: resRole } = response.data;
@@ -108,11 +107,11 @@ const AuthModal = ({ setAuth }) => {
           navigate('/student-dashboard');
         }
       } else {
-        setError('Auto login failed: Invalid credentials');
+        setError('Ошибка автоматического входа: неверные данные');
       }
     } catch (err) {
-      console.error('Registration error:', err);
-      setError('Registration error: ' + JSON.stringify(err));
+      console.error('Ошибка регистрации:', err);
+      setError('Ошибка регистрации: ' + JSON.stringify(err));
     }
   };
 
@@ -125,98 +124,98 @@ const AuthModal = ({ setAuth }) => {
             className={activeTab === 'login' ? 'active' : ''}
             onClick={() => handleTabChange('login')}
           >
-            Login
+            Вход
           </button>
           <button 
             className={activeTab === 'register' ? 'active' : ''}
             onClick={() => handleTabChange('register')}
           >
-            Register
+            Регистрация
           </button>
         </div>
         {error && <p className="error-message">{error}</p>}
         {activeTab === 'login' ? (
           <form onSubmit={handleLoginSubmit} className="auth-form">
             <div className="form-group">
-              <label>Role:</label>
+              <label>Роль:</label>
               <select value={role} onChange={(e) => setRole(e.target.value)}>
-                <option value="teacher">Teacher</option>
-                <option value="student">Student</option>
+                <option value="teacher">Преподаватель</option>
+                <option value="student">Студент</option>
               </select>
             </div>
             <div className="form-group">
-              <label>Email:</label>
+              <label>Электронная почта:</label>
               <input 
                 type="email" 
                 value={loginEmail} 
                 onChange={(e) => setLoginEmail(e.target.value)} 
-                placeholder="Enter your email" 
+                placeholder="Введите электронную почту" 
                 required
               />
             </div>
             <div className="form-group">
-              <label>Password:</label>
+              <label>Пароль:</label>
               <input 
                 type="password" 
                 value={loginPassword} 
                 onChange={(e) => setLoginPassword(e.target.value)} 
-                placeholder="Enter your password" 
+                placeholder="Введите пароль" 
                 required
               />
             </div>
-            <button type="submit" className="submit-btn">Login</button>
+            <button type="submit" className="submit-btn">Войти</button>
           </form>
         ) : (
           <form onSubmit={handleRegisterSubmit} className="auth-form">
             <div className="form-group">
-              <label>Role:</label>
+              <label>Роль:</label>
               <select value={role} onChange={(e) => setRole(e.target.value)}>
-                <option value="teacher">Teacher</option>
-                <option value="student">Student</option>
+                <option value="teacher">Преподаватель</option>
+                <option value="student">Студент</option>
               </select>
             </div>
             <div className="form-group">
-              <label>Email:</label>
+              <label>Электронная почта:</label>
               <input 
                 type="email" 
                 value={regEmail} 
                 onChange={(e) => setRegEmail(e.target.value)} 
-                placeholder="Enter your email" 
+                placeholder="Введите электронную почту" 
                 required
               />
             </div>
             <div className="form-group">
-              <label>{role === 'teacher' ? 'Teacher Name:' : 'Student Name:'}</label>
+              <label>{role === 'teacher' ? 'Имя преподавателя:' : 'Имя студента:'}</label>
               <input 
                 type="text" 
                 value={regName} 
                 onChange={(e) => setRegName(e.target.value)} 
-                placeholder={role === 'teacher' ? 'Enter teacher name' : 'Enter student name'} 
+                placeholder={role === 'teacher' ? 'Введите имя преподавателя' : 'Введите имя студента'} 
                 required
               />
             </div>
             {role === 'student' && (
               <div className="form-group">
-                <label>Group:</label>
+                <label>Группа:</label>
                 <input 
                   type="text" 
                   value={regGroup}
                   onChange={(e) => setRegGroup(e.target.value)}
-                  placeholder="Enter your group" 
+                  placeholder="Введите группу" 
                 />
               </div>
             )}
             <div className="form-group">
-              <label>Password:</label>
+              <label>Пароль:</label>
               <input 
                 type="password" 
                 value={regPassword} 
                 onChange={(e) => setRegPassword(e.target.value)} 
-                placeholder="Enter your password" 
+                placeholder="Введите пароль" 
                 required
               />
             </div>
-            <button type="submit" className="submit-btn">Register</button>
+            <button type="submit" className="submit-btn">Зарегистрироваться</button>
           </form>
         )}
       </div>

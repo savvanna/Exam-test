@@ -6,10 +6,11 @@ import TeacherDashboard from './components/Dashboard/TeacherDashboard';
 import StudentDashboard from './components/Dashboard/StudentDashboard';
 import CreateExam from './components/Exam/CreateExam';
 import TakeExam from './components/Exam/TakeExam';
-import Results from './components/Exam/Results';
+import Results from './components/Exam/ExamResults';
 import ModuleTests from './components/ModuleTests/ModuleTests';
 import CoreModule from './components/ModuleTests/CoreModule';
 import BehaviourModule from './components/ModuleTests/BehaviourModule';
+import DrivingTestModule from './components/ModuleTests/DrivingTestModule';
 import ParkingModule from './components/ModuleTests/ParkingModule';
 import EmergenciesModule from './components/ModuleTests/EmergenciesModule';
 import RoadRulesModule from './components/ModuleTests/RoadRulesModule';
@@ -99,6 +100,7 @@ const App = () => {
         <Route path="/module-tests/emergencies" element={<EmergenciesModule />} />
         <Route path="/module-tests/roadrules" element={<RoadRulesModule />} />
         <Route path="/module-tests/intersection" element={<IntersectionModule />} />
+        <Route path="/module-tests/driving" element={<DrivingTestModule />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>

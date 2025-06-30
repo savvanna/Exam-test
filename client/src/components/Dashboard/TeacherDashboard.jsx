@@ -1,39 +1,62 @@
 // client/src/components/Dashboard/TeacherDashboard.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaHome, FaUser, FaBook, FaCog, FaSignOutAlt, FaUsers } from 'react-icons/fa';
+import {
+  FaHome,
+  FaUser,
+  FaBook,
+  FaCog,
+  FaSignOutAlt,
+  FaUsers,
+  FaClipboardList
+} from 'react-icons/fa';
 import axios from 'axios';
 import CreateExamForm from '../Exam/CreateExam';
 import '../../styles/Dashboard.css';
 import '../../styles/CreateExam.css';
+import ExamResults from '../Exam/ExamResults';
 
 const TeacherDashboard = ({ setAuth }) => {
   const navigate = useNavigate();
-  // activeView: "profile", "createExam" или "students"
+  // activeView: "profile", "createExam", "students", "results", "modules"
   const [activeView, setActiveView] = useState('profile');
 
   // Состояния для списка студентов
   const [studentsData, setStudentsData] = useState([]);
   const [studentsLoading, setStudentsLoading] = useState(false);
   const [studentsError, setStudentsError] = useState('');
-  // Список выбранных студентов (их ID), например, через чекбоксы
+  // Список выбранных студентов (их ID)
   const [selectedStudents, setSelectedStudents] = useState([]);
 
   // Состояния для экзамена, который назначается
   const [availableExams, setAvailableExams] = useState([]);
   const [selectedExam, setSelectedExam] = useState('');
-  // Состояние для показа сообщения (alert) после назначения экзамена
+  // Сообщение при назначении экзамена
   const [assignmentMessage, setAssignmentMessage] = useState(null);
 
+  // Состояния для результатов экзаменов (для преподавателя)
+  const [results, setResults] = useState([]);
+  const [resultsLoading, setResultsLoading] = useState(false);
+  const [resultsError, setResultsError] = useState('');
+
   // Состояние сортировки по колонке "Group"
-  const [groupSortOrder, setGroupSortOrder] = useState('asc'); // 'asc' или 'desc'
+  const [groupSortOrder, setGroupSortOrder] = useState('asc');
 
   // Извлекаем данные преподавателя из localStorage
   const teacherName = localStorage.getItem('teacherName') || 'Teacher Name';
   const teacherEmail = localStorage.getItem('teacherEmail') || 'teacher@example.com';
   const role = localStorage.getItem('role') || 'teacher';
+  const teacherID = localStorage.getItem('teacherID') || null;
 
-  // Обновлённая функция logout: очищает localStorage, сбрасывает динамичный state и делает навигацию
+  // Функция форматирования даты (формат "dd.mm.yyyy")
+  const formatDate = (dateStr) => {
+    const d = new Date(dateStr);
+    return isNaN(d.getTime())
+      ? 'N/A'
+      : d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  };
+
+  // Функция логаута
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
@@ -41,23 +64,22 @@ const TeacherDashboard = ({ setAuth }) => {
     localStorage.removeItem('teacherEmail');
     localStorage.removeItem('subject');
     localStorage.removeItem('teacherID');
-    setAuth({ token: null, role: null }); // обновляем динамичное состояние аутентификации
-    navigate('/'); // перенаправляем на главную страницу (где будет окно авторизации)
+    setAuth({ token: null, role: null });
+    navigate('/');
   };
 
+  // Callback после создания экзамена
   const handleExamCreated = (exam) => {
     console.log('Exam created:', exam);
     setActiveView('profile');
   };
 
-  // При переключении на view "students" загружаем список студентов и доступных экзаменов
+  // Загрузка студентов и экзаменов при view "students"
   useEffect(() => {
-    
     if (activeView === 'students') {
       const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
       const token = localStorage.getItem('token');
-      
-      // Функция для загрузки студентов
+
       const fetchStudents = async () => {
         setStudentsLoading(true);
         try {
@@ -72,10 +94,8 @@ const TeacherDashboard = ({ setAuth }) => {
         } finally {
           setStudentsLoading(false);
         }
-        
       };
 
-      // Функция для загрузки доступных экзаменов
       const fetchExams = async () => {
         try {
           const response = await axios.get(`${baseURL}/exams`, {
@@ -91,7 +111,32 @@ const TeacherDashboard = ({ setAuth }) => {
       fetchExams();
     }
   }, [activeView]);
-  
+
+  // Загрузка результатов экзаменов при view "results"
+  useEffect(() => {
+    if (activeView === 'results' && teacherID) {
+      const fetchResults = async () => {
+        setResultsLoading(true);
+        try {
+          const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+          const token = localStorage.getItem('token');
+          // GET-запрос: /results?teacherId=<teacherID>
+          const response = await axios.get(`${baseURL}/results?teacherId=${teacherID}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setResults(response.data);
+          setResultsError('');
+        } catch (error) {
+          console.error('Ошибка загрузки результатов:', error);
+          setResultsError('Ошибка загрузки результатов экзаменов.');
+        } finally {
+          setResultsLoading(false);
+        }
+      };
+      fetchResults();
+    }
+  }, [activeView, teacherID]);
+
   // Функция для переключения выбранности студента по чекбоксу
   const toggleStudentSelection = (studentId) => {
     if (selectedStudents.includes(studentId)) {
@@ -103,7 +148,7 @@ const TeacherDashboard = ({ setAuth }) => {
 
   // Переключение сортировки по колонке группы
   const toggleGroupSort = () => {
-    setGroupSortOrder(prevOrder => (prevOrder === 'asc' ? 'desc' : 'asc'));
+    setGroupSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
   };
 
   // Получаем отсортированный список студентов по группе
@@ -126,118 +171,125 @@ const TeacherDashboard = ({ setAuth }) => {
       return;
     }
     try {
-      // Здесь можно реализовать вызов API для назначения экзамена, например:
-      // await axios.post(`${baseURL}/assign-exam`, { examId: selectedExam, studentIds: selectedStudents }, { headers... })
-      // Для демонстрации просто формируем сообщение:
+      const baseURL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+      await axios.post(
+        `${baseURL}/exams/assign`,
+        {
+          examId: selectedExam,
+          studentIds: selectedStudents,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setAssignmentMessage({
         type: 'success',
-        text: `Экзамен успешно назначен! (Exam ID: ${selectedExam})\nСтуденты: ${selectedStudents.join(', ')}`
+        text: `Экзамен успешно назначен! (Exam ID: ${selectedExam})\nСтуденты: ${selectedStudents.join(', ')}`,
       });
-      // Сброс выбранных студентов и экзамена
       setSelectedStudents([]);
       setSelectedExam('');
     } catch (error) {
       setAssignmentMessage({ type: 'error', text: 'Ошибка при назначении экзамена.' });
     }
-    // Скрытие сообщения через 3 секунды
     setTimeout(() => {
       setAssignmentMessage(null);
     }, 3000);
   };
 
-  // Функция для рендеринга контента в зависимости от activeView
+  // Рендеринг содержимого в зависимости от activeView
   const renderContent = () => {
-    if (activeView === 'profile') {
-      return (
-        <div className="profile-section">
-          <h2>Профиль учителя</h2>
-          <p>
-            Добро пожаловать, {teacherName}!
-          </p>
-          <ul>
-            <li><strong>Email:</strong> {teacherEmail}</li>
-          </ul>
-        </div>
-      );
-    }
-    if (activeView === 'createExam') {
-      return (
-        <CreateExamForm
-          onCancel={() => setActiveView('profile')}
-          onExamCreated={handleExamCreated}
-        />
-      );
-    }
-    if (activeView === 'students') {
-      return (
-        <div className="students-section">
-          <h2>Студенты/группы</h2>
-          {/* Блок выбора экзамена для назначения */}
-          <div className="assignment-section">
-            <label htmlFor="examSelect">Выберите экзамен для назначения:</label>
-            <select
-              id="examSelect"
-              value={selectedExam}
-              onChange={(e) => setSelectedExam(e.target.value)}
-            >
-              <option value="">-- Выберите экзамен --</option>
-              {availableExams.map((exam) => (
-                <option key={exam.ExamID} value={exam.ExamID}>
-                  {exam.Title} (Дата: {new Date(exam.Date).toLocaleDateString()})
-                </option>
-              ))}
-            </select>
+    switch (activeView) {
+      case 'profile':
+        return (
+          <div className="profile-section">
+            <h2>Профиль учителя</h2>
+            <p>Добро пожаловать, {teacherName}!</p>
+            <ul>
+              <li><strong>Email:</strong> {teacherEmail}</li>
+            </ul>
           </div>
-          {assignmentMessage && (
-            <div className={`custom-alert ${assignmentMessage.type}`}>
-              {assignmentMessage.text.split('\n').map((line, index) => (
-                <p key={index} style={{ margin: 0 }}>{line}</p>
-              ))}
+        );
+      case 'createExam':
+        return (
+          <CreateExamForm onCancel={() => setActiveView('profile')} onExamCreated={handleExamCreated} />
+        );
+      case 'students':
+        return (
+          <div className="students-section">
+            <h2>Студенты/Группы</h2>
+            <div className="assignment-section">
+              <label htmlFor="examSelect">Выберите экзамен для назначения:</label>
+              <select id="examSelect" value={selectedExam} onChange={(e) => setSelectedExam(e.target.value)}>
+                <option value="">-- Выберите экзамен --</option>
+                {availableExams.map((exam) => (
+                  <option key={exam.ExamID} value={exam.ExamID}>
+                    {exam.Title} (Дата: {formatDate(exam.Date)})
+                  </option>
+                ))}
+              </select>
             </div>
-          )}
-          {studentsLoading ? (
-            <p>Loading students...</p>
-          ) : studentsError ? (
-            <p className="error">{studentsError}</p>
-          ) : (
-            <div className="table-container">
-              <table className="styled-table">
-                <thead>
-                  <tr>
-                    <th>Select</th>
-                    <th>Student Name</th>
-                    <th>Email</th>
-                    <th onClick={toggleGroupSort} className="sortable" style={{cursor: 'pointer'}}>
-                      Group {groupSortOrder === 'asc' ? '▲' : '▼'}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sortedStudents.map((student) => (
-                    <tr key={student.StudentID}>
-                      <td>
-                        <input
-                          type="checkbox"
-                          checked={selectedStudents.includes(student.StudentID)}
-                          onChange={() => toggleStudentSelection(student.StudentID)}
-                        />
-                      </td>
-                      <td>{student.StudentName}</td>
-                      <td>{student.Email}</td>
-                      <td>{student.groupName || 'N/A'}</td>
+            {assignmentMessage && (
+              <div className={`custom-alert ${assignmentMessage.type}`}>
+                {assignmentMessage.text.split('\n').map((line, index) => (
+                  <p key={index} style={{ margin: 0 }}>{line}</p>
+                ))}
+              </div>
+            )}
+            {studentsLoading ? (
+              <p>Loading students...</p>
+            ) : studentsError ? (
+              <p className="error">{studentsError}</p>
+            ) : (
+              <div className="table-container">
+                <table className="styled-table">
+                  <thead>
+                    <tr>
+                      <th>Select</th>
+                      <th>Student Name</th>
+                      <th>Email</th>
+                      <th onClick={toggleGroupSort} className="sortable" style={{ cursor: 'pointer' }}>
+                        Group {groupSortOrder === 'asc' ? '▲' : '▼'}
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-              <button className="submit-btn" onClick={handleAssignExam}>
-                Назначить экзамен выбранным студентам
-              </button>
-            </div>
-          )}
-        </div>
-      );
+                  </thead>
+                  <tbody>
+                    {sortedStudents.map((student) => (
+                      <tr key={student.StudentID}>
+                        <td>
+                          <input
+                            type="checkbox"
+                            checked={selectedStudents.includes(student.StudentID)}
+                            onChange={() => toggleStudentSelection(student.StudentID)}
+                          />
+                        </td>
+                        <td>{student.StudentName}</td>
+                        <td>{student.Email}</td>
+                        <td>{student.groupName || 'N/A'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <button className="submit-btn" onClick={handleAssignExam}>
+                  Назначить экзамен выбранным студентам
+                </button>
+              </div>
+            )}
+          </div>
+        );
+      case 'results':
+  return (
+    <div className="results-section">
+      <ExamResults results={results} role={role} />
+      <button className="back-to-profile-btn" onClick={() => setActiveView('profile')}>
+        Вернуться к профилю
+      </button>
+    </div>
+  );
+      
+      default:
+        return null;
     }
-    return null;
   };
 
   return (
@@ -248,12 +300,10 @@ const TeacherDashboard = ({ setAuth }) => {
             <FaUser size={40} color="#007bff" />
           </Link>
           <div className="profile-text">
-            <Link to="#" onClick={() => setActiveView('profile')} className="user-link" color="#007bff">
-              <span className="user-name" color="#007bff">  {teacherName}</span>
+            <Link to="#" onClick={() => setActiveView('profile')} className="user-link">
+              <span className="user-name">{teacherName}</span>
             </Link>
-            <span className="user-role">
-              ({role.charAt(0).toUpperCase() + role.slice(1)})
-            </span>
+            <span className="user-role">({role.charAt(0).toUpperCase() + role.slice(1)})</span>
           </div>
         </div>
         <nav className="sidebar-menu">
@@ -277,6 +327,12 @@ const TeacherDashboard = ({ setAuth }) => {
               </Link>
             </li>
             <li>
+              <Link to="#" onClick={() => setActiveView('results')}>
+                <FaClipboardList className="menu-icon" />
+                <span>Результаты экзаменов</span>
+              </Link>
+            </li>
+            <li>
               <Link to="/teacher-settings">
                 <FaCog className="menu-icon" />
                 <span>Настройки</span>
@@ -285,11 +341,13 @@ const TeacherDashboard = ({ setAuth }) => {
           </ul>
         </nav>
         <div className="logout" onClick={handleLogout}>
-          <FaSignOutAlt className="menu-icon" />
+          <FaSignOutAlt className="menu-icon" color="#fff" />
           <span>Выйти</span>
         </div>
       </aside>
-      <main className="dashboard-content">{renderContent()}</main>
+      <main className="dashboard-content">
+        {renderContent()}
+      </main>
     </div>
   );
 };

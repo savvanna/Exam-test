@@ -9,9 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
-      validate: {
-        isEmail: true,
-      },
+      validate: { isEmail: true },
     },
     RegistrationDate: {
       type: DataTypes.DATE,
@@ -30,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     assignedExams: { 
-      // Хранение назначенных экзаменов как JSON (массив)
+      // Хранение назначенных экзаменов в формате JSON (массив)
       type: DataTypes.JSON,
       defaultValue: [],
     },
