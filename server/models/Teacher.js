@@ -8,10 +8,8 @@ module.exports = (sequelize, DataTypes) => {
     Email: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true, // Email должен быть уникальным
-      validate: {
-        isEmail: true,
-      },
+      unique: true,
+      validate: { isEmail: true },
     },
     Password: {
       type: DataTypes.STRING,

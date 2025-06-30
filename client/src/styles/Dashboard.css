@@ -280,3 +280,67 @@
   font-weight: bold;
   color: #007bff;
 }
+/* Улучшенные стили для таблиц (например, для списков экзаменов, назначенных экзаменов и результатов) */
+
+.styled-table,
+.assignments-table,
+.results-table {
+  width: 100%;
+  border-collapse: separate; /* Используем отдельные границы для возможности задания border-spacing */
+  border-spacing: 0 15px;      /* Вертикальный отступ между строками для «дыхания» */
+  margin-top: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #fff;
+}
+
+/* Стили заголовков таблицы */
+.styled-table thead tr,
+.assignments-table thead tr,
+.results-table thead tr {
+  background-color: #009879;
+  color: #ffffff;
+  text-align: left;
+}
+
+/* Ячейки таблиц */
+.styled-table th,
+.styled-table td,
+.assignments-table th,
+.assignments-table td,
+.results-table th,
+.results-table td {
+  padding: 16px 20px;         /* Увеличенные вертикальные и горизонтальные отступы */
+  letter-spacing: 0.5px;       /* Увеличенное расстояние между символами */
+  font-size: 16px;
+  border: 1px solid #dddddd;
+}
+
+/* Для четных строк можно задать более светлый фон */
+.styled-table tbody tr:nth-child(even),
+.assignments-table tbody tr:nth-child(even),
+.results-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* При наведении строк выделяем */
+.styled-table tbody tr:hover,
+.assignments-table tbody tr:hover,
+.results-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Дополнительное стилизованное оформление для таблиц, чтобы они выглядели «воздушно» */
+.table-container {
+  margin: 30px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Если нужно увеличить расстояние между словами внутри ячеек */
+.styled-table td,
+.assignments-table td,
+.results-table td {
+  word-spacing: 2px;
+}

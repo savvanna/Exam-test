@@ -1,0 +1,44 @@
+.exam-results-container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.exam-results-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.8em;
+  color: #333;
+}
+
+.exam-results-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.exam-results-table th,
+.exam-results-table td {
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.exam-results-table th {
+  background-color: #007bff;
+  color: #fff;
+  letter-spacing: 0.05em;
+}
+
+.exam-results-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.exam-results-table tr:hover {
+  background-color: #e9f5ff;
+}
+
+.exam-results-table td {
+  border-bottom: 1px solid #ddd;
+}
